@@ -1,7 +1,7 @@
+require('dotenv').config()
 const Discord = require('discord.js');
 const https = require('https');
 const libre = require('libreoffice-convert');
-const { token, formats } = require('./config.json');
 
 // Create an instance of a Discord client
 const client = new Discord.Client();
@@ -29,7 +29,10 @@ client.on('message', msg => {
 
             const fileName = attachment.name;
 
-            if (formats.includes(fileName.substring(fileName.lastIndexOf(".") + 1))) {
+            const formats = process.env.FORMATS.split(',');
+            const extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+            if (formats.includes(extension)) {
 
                 https.get(attachment.url, res => {
 
@@ -76,4 +79,4 @@ client.on('message', msg => {
 
 });
 
-client.login(token);
+client.login(process.env.TOKEN);
