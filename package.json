@@ -1,0 +1,23 @@
+{
+  "name": "discord-makepdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheAslera/Discord-MakePDF.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheAslera/Discord-MakePDF/issues"
+  },
+  "homepage": "https://github.com/TheAslera/Discord-MakePDF#readme",
+  "dependencies": {
+    "discord.js": "^12.0.2",
+    "libreoffice-convert": "^1.0.5"
+  }
+}
