@@ -1,0 +1,25 @@
+{
+  "name": "discordbots",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
+    "start": "npx pm2-runtime start pm2-apps.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpctorr/DiscordBots.git"
+  },
+  "author": "vpctorr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vpctorr/DiscordBots/issues"
+  },
+  "homepage": "https://github.com/vpctorr/DiscordBots#readme",
+  "dependencies": {
+    "pm2": "^4.4.0"
+  },
+  "engines": {
+    "node": "12.x"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "discord-makepdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "makepdf.js",
+  "scripts": {
+    "start": "node makepdf"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpctorr/DiscordBots.git"
+  },
+  "author": "vpctorr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vpctorr/DiscordBots/issues"
+  },
+  "homepage": "https://github.com/vpctorr/DiscordBots#readme",
+  "dependencies": {
+    "dblapi.js": "^2.4.0",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "libreoffice-convert": "git+https://github.com/TheAslera/libreoffice-convert.git"
+  }
+}

@@ -1,0 +1,12 @@
+{
+    "apps": [
+        {
+        "name": "makepdf",
+        "script": "./MakePDF/makepdf.js"
+      },
+      {
+        "name": "voicenotify",
+        "script": "./VoiceNotify/voicenotify.js"
+      }
+    ]
+  }
