@@ -11,10 +11,11 @@ Install LibreOffice (Windows/Mac : use the installer as you normally would)
 ```
 sudo apt-get install libreoffice-core --no-install-recommends
 ```
-Create a `config.json` file containing your bot token as follows
+Create a `config.json` file containing your bot token and supported formats as follows
 ```
 {
-	"token": "your_discord_token"
+	"token": "your_discord_token",
+	"formats" : [ "doc", "docx", "odt", "rtf" ]
 }
 ```
 Run the bot with `node index`

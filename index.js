@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const https = require('https');
 const libre = require('libreoffice-convert');
-const { token } = require('./config.json');
+const { token, formats } = require('./config.json');
 
 // Create an instance of a Discord client
 const client = new Discord.Client();
@@ -9,12 +9,14 @@ const client = new Discord.Client();
 // Bot will be able to send & receive to Discord only after this
 client.on('ready', () => {
     console.log('Bot started & ready to answer !');
-    client.user.setStatus('online', 'Converting files for you ⚡');
+    client.user.setStatus('Converting files for you ⚡');
 });
 
+// On message received
 client.on('message', msg => {
 
     try {
+
         if (msg.author.id == client.user.id) return
 
         const Attachment = (msg.attachments).array();
@@ -27,35 +29,33 @@ client.on('message', msg => {
 
             const fileName = attachment.name;
 
-            if (fileName.endsWith(".doc") || fileName.endsWith(".docx") || fileName.endsWith(".odt") || fileName.endsWith(".rtf")) {
+            if (formats.includes(fileName.substring(fileName.lastIndexOf(".") + 1))) {
 
                 https.get(attachment.url, res => {
 
                     const bufs = [];
 
                     res.on('data', function (chunk) {
-
                         bufs.push(chunk)
-
                     });
 
                     res.on('error', function (err) {
-
-                        console.log("Error during HTTP request");
-                        console.log(err.message);
-
+                        console.log(`Error during HTTP request : ${err.message}`);
                     });
 
                     res.on('end', function () {
 
-                        const data = Buffer.concat(bufs);
+                        const fileData = Buffer.concat(bufs);
 
-                        libre.convert(data, ".pdf", undefined, (err, done) => {
+                        libre.convert(fileData, ".pdf", undefined, (err, pdfData) => {
 
-                            if (err) console.log(`Error converting file: ${err}`);
+                            if (err) {
+                                msg.channel.send(`Sorry, the conversion has failed :(`);
+                                console.log(`Error converting file : ${err}`);
+                            }
 
                             const newName = fileName.substring(0, fileName.lastIndexOf(".")) + ".pdf";
-                            const newAttachment = new Discord.MessageAttachment(done, newName);
+                            const newAttachment = new Discord.MessageAttachment(pdfData, newName);
                             msg.channel.send(`Here is your converted PDF file !`, newAttachment);
 
                         });
@@ -68,8 +68,10 @@ client.on('message', msg => {
 
         });
 
-    } catch {
-        console.log("error")
+    } catch (ex) {
+
+        console.log(`Error : ${ex}`);
+
     }
 
 });
