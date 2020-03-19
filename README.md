@@ -19,6 +19,8 @@ FORMATS=doc,docx,odt,rtf
 Then run the bot with `npm start`
 
 ## Heroku
-Set up environment variables and add the following buildpack
+Set up environment variables and add the following buildpacks
+
+https://github.com/heroku/heroku-buildpack-apt.git
 
 https://github.com/BlueTeaLondon/heroku-buildpack-libreoffice-for-heroku-18.git
