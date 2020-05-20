@@ -7,13 +7,21 @@ const libre = require('libreoffice-convert');
 const client = new Discord.Client();
 
 // Bot will be able to send & receive to Discord only after this
-client.on('ready', () => {
-    console.log('Bot started & ready to answer !');
-    client.user.setStatus('Converting files for you ⚡');
+client.on("ready", () => {
+    console.log('MakePDF bot started & ready to answer !');
+    client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
+});
+
+client.on("guildCreate", guild => {
+    client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
+});
+
+client.on("guildDelete", guild => {
+    client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
 });
 
 // On message received
-client.on('message', msg => {
+client.on('message', async msg => {
 
     try {
 

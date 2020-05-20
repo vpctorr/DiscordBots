@@ -1,0 +1,26 @@
+{
+  "name": "discord-voicenotify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "voicenotify.js",
+  "scripts": {
+    "start": "node voicenotify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpctorr/DiscordBots.git"
+  },
+  "author": "vpctorr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vpctorr/DiscordBots/issues"
+  },
+  "homepage": "https://github.com/vpctorr/DiscordBots#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0"
+  },
+  "engines": {
+    "node": "12.x"
+  }
+}

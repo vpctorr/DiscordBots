@@ -2,20 +2,20 @@
   "name": "discord-makepdf",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "makepdf.js",
   "scripts": {
-    "start": "node index"
+    "start": "node makepdf"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheAslera/Discord-MakePDF.git"
+    "url": "git+https://github.com/vpctorr/DiscordBots.git"
   },
-  "author": "",
+  "author": "vpctorr",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/TheAslera/Discord-MakePDF/issues"
+    "url": "https://github.com/vpctorr/DiscordBots/issues"
   },
-  "homepage": "https://github.com/TheAslera/Discord-MakePDF#readme",
+  "homepage": "https://github.com/vpctorr/DiscordBots#readme",
   "dependencies": {
     "discord.js": "^12.0.2",
     "dotenv": "^8.2.0",
