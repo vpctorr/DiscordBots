@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
-    "start": "npx pm2 start MakePDF/makepdf.js --name makepdf && npx pm2 start VoiceNotify/voicenotify.js --name voicenotify"
+    "start": "npx pm2 start MakePDF/makepdf.js --name makepdf --exp-backoff-restart-delay=100 && npx pm2 start VoiceNotify/voicenotify.js --name voicenotify --exp-backoff-restart-delay=100"
   },
   "repository": {
     "type": "git",

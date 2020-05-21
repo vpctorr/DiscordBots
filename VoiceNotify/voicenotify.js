@@ -15,7 +15,7 @@ Firebase.initializeApp({
     credential: Firebase.credential.cert({
         "client_email": process.env.VOICENOTIFY_FIREBASE_CLIENT_EMAIL,
         "private_key": JSON.parse(`"${process.env.VOICENOTIFY_FIREBASE_PRIVATE_KEY}"`),
-        "project_id": process.env.VOICENOTIFY_FIREBASE_PROJET_ID,
+        "project_id": process.env.VOICENOTIFY_FIREBASE_PROJECT_ID,
     }),
     databaseURL: process.env.VOICENOTIFY_FIREBASE_DATABASE_URL
 });
