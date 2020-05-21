@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
-    "start": "npx pm2-runtime start MakePDF/makepdf.js --name makepdf && npx pm2-runtime start VoiceNotify/voicenotify.js --name voicenotify"
+    "start": "npx pm2-runtime start pm2-apps.json"
   },
   "repository": {
     "type": "git",
