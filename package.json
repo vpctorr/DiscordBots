@@ -1,10 +1,10 @@
 {
-  "name": "discord-voicenotify",
+  "name": "discordbots",
   "version": "1.0.0",
   "description": "",
-  "main": "voicenotify.js",
   "scripts": {
-    "start": "node voicenotify"
+    "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
+    "start": "npx pm2 start MakePDF/makepdf.js --name makepdf && npx pm2 start VoiceNotify/voicenotify.js --name voicenotify"
   },
   "repository": {
     "type": "git",
@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/vpctorr/DiscordBots#readme",
   "dependencies": {
-    "dblapi.js": "^2.4.0",
-    "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0",
-    "firebase-admin": "^8.12.1"
+    "pm2": "^4.4.0"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }

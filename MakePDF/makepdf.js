@@ -1,31 +1,38 @@
 require('dotenv').config()
+
 const Discord = require('discord.js');
+const bot = new Discord.Client();
+
+const DBL = require("dblapi.js");
+try {
+    const dbl_ = new DBL(process.env.MAKEPDF_TOPGG_TOKEN, bot);
+} catch (ex) {
+    console.log(`Error : ${ex}`);
+}
+
 const https = require('https');
 const libre = require('libreoffice-convert');
 
-// Create an instance of a Discord client
-const client = new Discord.Client();
-
 // Bot will be able to send & receive to Discord only after this
-client.on("ready", () => {
+bot.on("ready", () => {
     console.log('MakePDF bot started & ready to answer !');
-    client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
+    bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
 });
 
-client.on("guildCreate", guild => {
-    client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
+bot.on("guildCreate", guild => {
+    bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
 });
 
-client.on("guildDelete", guild => {
-    client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
+bot.on("guildDelete", guild => {
+    bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
 });
 
 // On message received
-client.on('message', async msg => {
+bot.on('message', async msg => {
 
     try {
 
-        if (msg.author.id == client.user.id) return
+        if (msg.author.id == bot.user.id) return
 
         const Attachment = (msg.attachments).array();
 
@@ -37,7 +44,7 @@ client.on('message', async msg => {
 
             const fileName = attachment.name;
 
-            const formats = process.env.FORMATS.split(',');
+            const formats = process.env.MAKEPDF_SETTINGS_FORMATS.split(',');
             const extension = fileName.substring(fileName.lastIndexOf(".") + 1);
 
             if (formats.includes(extension)) {
@@ -87,4 +94,4 @@ client.on('message', async msg => {
 
 });
 
-client.login(process.env.TOKEN);
+bot.login(process.env.MAKEPDF_DISCORD_TOKEN);
