@@ -35,6 +35,8 @@ bot.on("guildDelete", guild => {
     bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
 });
 
+var lastJoinTime = new Map(); //last join time per channel
+
 // On msg received
 bot.on('voiceStateUpdate', async (oldState, state) => {
 
@@ -44,21 +46,27 @@ bot.on('voiceStateUpdate', async (oldState, state) => {
 
             var dbServerData = snapshot.val();
 
-            if (dbServerData == undefined) return; //if server is in db
+            if (dbServerData == undefined) return; //return if server is not in db
 
             var voiceChannel = state.channel;
 
-            if (voiceChannel == undefined) return; //if user was not leaving a channel
+            if (voiceChannel == undefined) return; //return if user is leaving a channel
 
-            if (dbServerData[voiceChannel.id] == undefined) return; //if voice channel is in db
+            if (oldState.channel != undefined && voiceChannel.id == oldState.channel.id) return; //return if user changing mute/listen status
 
             var dbChannelData = dbServerData[voiceChannel.id];
 
-            if (voiceChannel.members.array().length < dbChannelData.min) return; //if threshold is reached
+            if (dbChannelData == undefined) return; //return if voice channel is not in db
+
+            if (voiceChannel.members.array().length < dbChannelData.min) return; //return if threshold is not reached
+
+            if (Date.now() - lastJoinTime.get(voiceChannel.id) < 30*60*1000) return lastJoinTime.set(voiceChannel.id, Date.now()); //return if last join is >30m ago + update last join
+
+            lastJoinTime.set(voiceChannel.id, Date.now()); //update last join
 
             var textChannel = state.guild.channels.cache.find(ch => ch.id == dbChannelData.text);
 
-            if (textChannel == undefined) return; //if text channel exists
+            if (textChannel == undefined) return; //return if text channel does not exists
 
             var rolesList = "";
 
@@ -94,7 +102,8 @@ bot.on("message", async msg => {
                 if (/^\d+$/.test(args[2]) == true) threshold = args[2];
 
                 var roles = msg.mentions.roles; //get roles
-                roles.delete(bot.user.id);
+                if (!msg.mentions.has(msg.guild.me, { ignoreRoles: true })) roles.delete(msg.mentions.roles.first().id); //if bot was mentionned with role delete first role
+                // https://github.com/discordjs/discord.js/issues/2669
 
                 var dbGuild = db.ref(msg.guild.id); //set server
                 var dbChannel = dbGuild.child(msg.member.voice.channel.id); //set voice channel
