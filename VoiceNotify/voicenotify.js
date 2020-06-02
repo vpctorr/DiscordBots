@@ -4,11 +4,11 @@ const Discord = require('discord.js');
 const bot = new Discord.Client();
 
 const DBL = require("dblapi.js");
-//try {
-//    const dbl_ = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, bot);
-//} catch (ex) {
-//    console.log(`Error : ${ex}`);
-//}
+try {
+    const dbl_ = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, bot);
+} catch (ex) {
+    console.log(`Error : ${ex}`);
+}
 
 const Firebase = require("firebase-admin");
 Firebase.initializeApp({
