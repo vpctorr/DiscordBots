@@ -60,7 +60,7 @@ bot.on('voiceStateUpdate', async (oldState, state) => {
 
             if (voiceChannel.members.array().length < dbChannelData.min) return; //return if threshold is not reached
 
-            if (Date.now() - lastJoinTime.get(voiceChannel.id) < 30*60*1000) return lastJoinTime.set(voiceChannel.id, Date.now()); //return if last join is >30m ago + update last join
+            if (Date.now() - lastJoinTime.get(voiceChannel.id) < 30 * 60 * 1000) return lastJoinTime.set(voiceChannel.id, Date.now()); //return if last join is >30m ago + update last join
 
             lastJoinTime.set(voiceChannel.id, Date.now()); //update last join
 
@@ -72,7 +72,19 @@ bot.on('voiceStateUpdate', async (oldState, state) => {
 
             if (dbChannelData.roles != undefined) rolesList = dbChannelData.roles.map(el => ' <@&' + el + '>'); //mention roles
 
-            textChannel.send(`**:microphone2: A voice chat is taking place in the "${voiceChannel.name}" channel !${rolesList}**`) //send message
+            textChannel.send(`**:microphone2: A voice chat is taking place in the "${voiceChannel.name}" channel !\n${rolesList}**`) //send message
+
+            const embedObj = {
+                "color": 16007990,
+                "author": {
+                    "name": "Click here to add MakePDF bot : Document to PDF converter.",
+                    "url": "https://discord.com/oauth2/authorize?client_id=689807933415882762&scope=bot&permissions=52224",
+                    "icon_url": "https://images.discordapp.net/avatars/689807933415882762/e8aaa78cc19cc41a2c3bee87ee716c7e.png"
+                }
+            }
+            if (!state.guild.member("689807933415882762") && Math.random() < 0.75) {
+                textChannel.send({ embed: embedObj });
+            }
 
         });
 
