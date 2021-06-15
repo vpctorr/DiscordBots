@@ -37,5 +37,3 @@ MakePDF is a Discord bot that automatically converts word processing, spreadshee
 Simply add MakePDF to your server. It will automatically convert all supported files to PDF, in all the channels it has access to.
 
 We use the LibreOffice API to convert your files. Files are only temporarily transitting via our server but are not kept after the task is done.
-
-Source code is freely available on Github. For support or feature requests, please use our [Discord server](https://discord.gg/SrGXHcC) or Github issues.
