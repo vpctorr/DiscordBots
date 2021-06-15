@@ -1,3 +1,5 @@
+[![Discord Support Server](https://img.shields.io/discord/690172711770652779?color=5865F2&label=support%20server&logo=discord&logoColor=fff&style=for-the-badge)](https://discord.gg/8yCBHZ45js)
+
 # VoiceNotify
 
 VoiceNotify is a Discord bot that notifies people when a voice chat is taking place.
