@@ -9,13 +9,11 @@ VoiceNotify is a Discord bot that notifies people when a voice chat is taking pl
 Bot commands to enable & disable voice chat notifications (administrators only) :
 
 `@VoiceNotify enable [threshold] [roles]`
-
 Enables voice chat notifications for the voice channel you are in, alerts will be sent to the channel where this command is executed.
 
 Optional : [threshold] to trigger an alert defaults to 5 people ; [roles] will be mentioned when the alert is sent.
-                
-`@VoiceNotify disable`
 
+`@VoiceNotify disable`
 Disables voice chat notifications for the voice channel you are in.
 
 ---
