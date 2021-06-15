@@ -1,10 +1,11 @@
 # VoiceNotify
 
 VoiceNotify is a Discord bot that notifies people when a voice chat is taking place.
+[Add to Discord](https://discord.com/oauth2/authorize?client_id=712670038267789352&scope=bot&permissions=150528)  •  [Self-hosting](https://github.com/vpctorr/DiscordBots/blob/master/VoiceNotify/README.md)
 
 ### How to use the bot ?
 
-Bot commande to enable & disable voice chat notifications (administrators only) :
+Bot commands to enable & disable voice chat notifications (administrators only) :
 
 `@VoiceNotify enable [threshold] [roles]`
 Enables voice chat notifications for the voice channel you are in, alerts will be sent to the channel where this command is executed.
@@ -18,6 +19,7 @@ Disables voice chat notifications for the voice channel you are in.
 # MakePDF
 
 MakePDF is a Discord bot that automatically converts word processing, spreadsheet and presentation documents to PDF.
+[Add to Discord](https://discord.com/oauth2/authorize?client_id=689807933415882762&scope=bot&permissions=52224)  •  [Self-hosting](https://github.com/vpctorr/DiscordBots/blob/master/MakePDF/README.md)
 
 ### Common formats are supported :
 - DOC ; DOCX ; ODT ; RTF
