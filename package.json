@@ -1,6 +1,6 @@
 {
   "name": "discordbots",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "scripts": {
     "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/vpctorr/DiscordBots#readme",
   "dependencies": {
-    "pm2": "^4.4.0"
+    "pm2": "^4.5.6"
   },
   "engines": {
     "node": "12.x"

@@ -1,9 +1,10 @@
 {
   "name": "discord-voicenotify",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "voicenotify.js",
   "scripts": {
+    "postinstall": "npm version $(git describe)",
     "start": "node voicenotify"
   },
   "repository": {
@@ -18,8 +19,8 @@
   "homepage": "https://github.com/vpctorr/DiscordBots#readme",
   "dependencies": {
     "dblapi.js": "^2.4.0",
-    "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0",
-    "firebase-admin": "^8.12.1"
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.6.0",
+    "firebase-admin": "^8.13.0"
   }
 }

@@ -2,12 +2,14 @@ require('dotenv').config()
 
 const Discord = require('discord.js');
 const bot = new Discord.Client();
+const hook = new Discord.WebhookClient(process.env.VOICENOTIFY_WEBHOOK_ID, process.env.VOICENOTIFY_WEBHOOK_TOKEN);
 
 const DBL = require("dblapi.js");
 try {
     const dbl_ = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, bot);
 } catch (ex) {
-    console.log(`Error : ${ex}`);
+    console.log(`Topgg error : ${ex}`);
+    hook.log(`Topgg error : ${ex}`);
 }
 
 const Firebase = require("firebase-admin");
@@ -21,9 +23,12 @@ Firebase.initializeApp({
 });
 const db = Firebase.database();
 
+const pjson = require('./package.json');
+
 // Bot will be able to send & receive to Discord only after this
 bot.on("ready", () => {
-    console.log('VoiceNotify bot started & ready to answer !');
+    console.log(`Bot (re)started, version ${pjson.version}`);
+    hook.send(`Bot (re)started, version ${pjson.version}`);
     bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
 });
 
@@ -35,44 +40,55 @@ bot.on("guildDelete", guild => {
     bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
 });
 
-var lastJoinTime = new Map(); //last join time per channel
+let thresholdTimes = new Map(); //last threshold time per channel
+let broadcastTimes = new Map(); //last broadcast time per channel
 
-// On msg received
-bot.on('voiceStateUpdate', async (oldState, state) => {
+bot.on('voiceStateUpdate', async ({channel: oldChannel}, {channel, guild}) => {
 
     try {
 
         return db.ref(state.guild.id).once('value').then(function (snapshot) {
 
-            var dbServerData = snapshot.val();
+            // get guild settings or exit if undefined
+            const guildSettings = snapshot.val();
+            if (!guildSettings) return;
 
-            if (dbServerData == undefined) return; //return if server is not in db
+            // get channel settings or exit if undefined
+            const settings = guildSettings[channel.id];
+            if (!settings) return;
 
-            var voiceChannel = state.channel;
+            // get text channel or exit if undefined (deleted)
+            const textChannel = state.guild.channels.cache.find(ch => ch.id === settings.text);
+            if (!textChannel) return;
 
-            if (voiceChannel == undefined) return; //return if user is leaving a channel
+            // exit if user changing mute/listen status
+            if (channel?.id === oldChannel?.id) return;
 
-            if (oldState.channel != undefined && voiceChannel.id == oldState.channel.id) return; //return if user changing mute/listen status
+            // exit if threshold is not reached
+            if (channel.members.array().length < settings.min) return;
 
-            var dbChannelData = dbServerData[voiceChannel.id];
+            // get and set last threshold 
+            const lastThreshold = thresholdTimes.get(channel.id) ? thresholdTimes.get(channel.id) : Date.now();
+            thresholdTimes.set(channel.id, Date.now());
 
-            if (dbChannelData == undefined) return; //return if voice channel is not in db
+            // exit if threshold already reached <1h ago
+            if (lastThreshold && Date.now() - lastThreshold < 60 * 60 * 1000) return; 
 
-            if (voiceChannel.members.array().length < dbChannelData.min) return; //return if threshold is not reached
+            // exit if user is leaving a channel
+            if (!channel) return;
 
-            if (Date.now() - lastJoinTime.get(voiceChannel.id) < 30 * 60 * 1000) return lastJoinTime.set(voiceChannel.id, Date.now()); //return if last join is >30m ago + update last join
+            // get last broadcast and exit if already sent <1h ago
+            const lastBroadcast = broadcastTimes.get(channel.id)
+            if (lastBroadcast && Date.now() - lastBroadcast < 60 * 60 * 1000) return; 
 
-            lastJoinTime.set(voiceChannel.id, Date.now()); //update last join
+            // set last broadcast
+            broadcastTimes.set(channel.id, Date.now());
 
-            var textChannel = state.guild.channels.cache.find(ch => ch.id == dbChannelData.text);
+            // get potential roles to mention
+            const rolesList = settings.roles && settings.roles.map(rl => ' <@&' + rl + '>'); //mention roles
 
-            if (textChannel == undefined) return; //return if text channel does not exists
-
-            var rolesList = "";
-
-            if (dbChannelData.roles != undefined) rolesList = dbChannelData.roles.map(el => ' <@&' + el + '>'); //mention roles
-
-            textChannel.send(`**:microphone2: A voice chat is taking place in the "${voiceChannel.name}" channel !\n${rolesList}**`) //send message
+            // send message
+            textChannel.send(`**:microphone2: A voice chat is taking place in the "${channel.name}" channel !\n${rolesList}**`) //send message
 
             const embedObj = {
                 "color": 16007990,
@@ -82,15 +98,14 @@ bot.on('voiceStateUpdate', async (oldState, state) => {
                     "icon_url": "https://images.discordapp.net/avatars/689807933415882762/e8aaa78cc19cc41a2c3bee87ee716c7e.png"
                 }
             }
-            if (!state.guild.member("689807933415882762") && Math.random() < 0.75) {
-                textChannel.send({ embed: embedObj });
-            }
+            //if (!state.guild.member("689807933415882762") && Math.random() < 0.33) textChannel.send({ embed: embedObj });
 
         });
 
     } catch (ex) {
 
         console.log(`Error : ${ex}`);
+        hook.send(`Error : ${ex}`);
 
     }
 
@@ -101,24 +116,21 @@ bot.on("message", async msg => {
     try {
 
         if (msg.author.bot) return;
-        if (!msg.mentions.has(msg.guild.me, { ignoreEveryone: true })) return;
-        var args = msg.content.toLowerCase().split(/ +/g);
+        if (!msg.mentions?.has(msg.guild.me, { ignoreEveryone: true })) return;
+        const args = msg.content?.toLowerCase().split(/ +/g);
 
         if (msg.member.hasPermission('ADMINISTRATOR')) {
 
             if (args[1] == "enable") {
 
-                if (msg.member.voice.channel == undefined) return msg.reply("you must be in a voice channel to do this.");
+                if (!msg.member.voice?.channel) return msg.reply("you must be in a voice channel to do this.");
 
-                var threshold = 5; //get threshold
-                if (/^\d+$/.test(args[2]) == true) threshold = args[2];
+                const threshold = (/^\d+$/.test(args[2])) ? args[2] : 5; //get threshold
+                const roles = msg.mentions.roles; //get roles
 
-                var roles = msg.mentions.roles; //get roles
-                if (!msg.mentions.has(msg.guild.me, { ignoreRoles: true })) roles.delete(msg.mentions.roles.first().id); //if bot was mentionned with role delete first role
-                // https://github.com/discordjs/discord.js/issues/2669
+                const dbGuild = db.ref(msg.guild.id); //get guild
+                const dbChannel = dbGuild.child(msg.member.voice.channel.id); //get voice channel
 
-                var dbGuild = db.ref(msg.guild.id); //set server
-                var dbChannel = dbGuild.child(msg.member.voice.channel.id); //set voice channel
                 dbChannel.child("min").set(parseInt(threshold)); //set threshold
                 dbChannel.child("roles").set(roles.keyArray()); //set roles
                 dbChannel.child("text").set(parseInt(msg.channel.id)); //set text channel
@@ -127,9 +139,9 @@ bot.on("message", async msg => {
 
             } else if (args[1] == "disable") {
 
-                if (msg.member.voice.channel == undefined) return msg.reply("you must be in a voice channel to do this.");
+                if (!msg.member.voice?.channel) return msg.reply("you must be in a voice channel to do this.");
 
-                var dbGuild = db.ref(msg.guild.id); //get server
+                const dbGuild = db.ref(msg.guild.id); //get guild
 
                 dbGuild.child(msg.member.voice.channel.id).remove(); //delete voice channel
 
@@ -148,15 +160,12 @@ Disables voice chat notifications for the voice channel you are in.`);
 
             }
 
-        } else {
-
-            // regular user settings
-
         }
 
     } catch (ex) {
 
         console.log(`Error : ${ex}`);
+        hook.send(`Error : ${ex}`);
 
     }
 
