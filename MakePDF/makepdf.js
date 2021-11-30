@@ -37,15 +37,15 @@ bot.on('message', async msg => {
 
     try {
 
-        if (msg.author.id === bot.user.id) return
+        if (msg.author.id == bot.user.id) return
 
         const Attachments = (msg.attachments).array();
 
-        if (!Attachments || Attachments === null) return;
+        if (!Attachments || Attachments == null) return;
 
         Attachments.forEach((attachment) => {
 
-            if (!attachment || attachment === null) return;
+            if (!attachment || attachment == null) return;
 
             const fileName = attachment.name;
 

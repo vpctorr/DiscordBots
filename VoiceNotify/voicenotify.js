@@ -47,39 +47,39 @@ bot.on('voiceStateUpdate', async ({channel: oldChannel}, {channel, guild}) => {
 
     try {
 
-        return db.ref(state.guild.id).once('value').then(function (snapshot) {
+        return db.ref(guild.id).once('value').then(function (snapshot) {
 
             // get guild settings or exit if undefined
             const guildSettings = snapshot.val();
             if (!guildSettings) return;
 
             // get channel settings or exit if undefined
-            const settings = guildSettings[channel.id];
+            const settings = guildSettings[channel?.id];
             if (!settings) return;
 
             // get text channel or exit if undefined (deleted)
-            const textChannel = state.guild.channels.cache.find(ch => ch.id === settings.text);
+            const textChannel = guild.channels.cache.find(ch => ch.id == settings.text);
             if (!textChannel) return;
 
             // exit if user changing mute/listen status
-            if (channel?.id === oldChannel?.id) return;
+            if (channel?.id == oldChannel?.id) return;
 
             // exit if threshold is not reached
             if (channel.members.array().length < settings.min) return;
 
             // get and set last threshold 
-            const lastThreshold = thresholdTimes.get(channel.id) ? thresholdTimes.get(channel.id) : Date.now();
+            const lastThreshold = broadcastTimes.get(channel.id)
             thresholdTimes.set(channel.id, Date.now());
 
             // exit if threshold already reached <1h ago
-            if (lastThreshold && Date.now() - lastThreshold < 60 * 60 * 1000) return; 
+            if (lastThreshold && Date.now() - lastThreshold < 20 * 60 * 1000) return; 
 
             // exit if user is leaving a channel
             if (!channel) return;
 
             // get last broadcast and exit if already sent <1h ago
             const lastBroadcast = broadcastTimes.get(channel.id)
-            if (lastBroadcast && Date.now() - lastBroadcast < 60 * 60 * 1000) return; 
+            if (lastBroadcast && Date.now() - lastBroadcast < 40 * 60 * 1000) return; 
 
             // set last broadcast
             broadcastTimes.set(channel.id, Date.now());
@@ -98,7 +98,7 @@ bot.on('voiceStateUpdate', async ({channel: oldChannel}, {channel, guild}) => {
                     "icon_url": "https://images.discordapp.net/avatars/689807933415882762/e8aaa78cc19cc41a2c3bee87ee716c7e.png"
                 }
             }
-            //if (!state.guild.member("689807933415882762") && Math.random() < 0.33) textChannel.send({ embed: embedObj });
+            //if (!guild.member("689807933415882762") && Math.random() < 0.33) textChannel.send({ embed: embedObj });
 
         });
 
