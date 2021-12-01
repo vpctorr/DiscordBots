@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
-    "start": "npx pm2-runtime start pm2-apps.json"
+    "start": "npx pm2-runtime start pm2-apps.json",
+    "format": "prettier --write '{MakePDF,VoiceNotify}/**/*.{js,jsx,ts,tsx}'",
+    "lint": "eslint MakePDF VoiceNotify --max-warnings=0 && prettier --check '{MakePDF,VoiceNotify}/**/*.{js,jsx,ts,tsx}'"
   },
   "repository": {
     "type": "git",
@@ -12,10 +14,27 @@
   },
   "author": "vpctorr",
   "license": "MIT",
+  "homepage": "https://github.com/vpctorr/DiscordBots#readme",
   "bugs": {
     "url": "https://github.com/vpctorr/DiscordBots/issues"
   },
-  "homepage": "https://github.com/vpctorr/DiscordBots#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-universe": "^8.0.0",
+    "prettier": "^2.5.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "universe/node"
+    ]
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "tabWidth": 2,
+    "printWidth": 120
+  },
   "dependencies": {
     "pm2": "^4.5.6"
   },

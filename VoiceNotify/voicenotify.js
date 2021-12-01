@@ -1,174 +1,138 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable import/order */
+/* eslint-disable eqeqeq */
+/* eslint-disable radix */
+
 require('dotenv').config()
 
-const Discord = require('discord.js');
-const bot = new Discord.Client();
-const hook = new Discord.WebhookClient(process.env.VOICENOTIFY_WEBHOOK_ID, process.env.VOICENOTIFY_WEBHOOK_TOKEN);
+const {
+  Client,
+  WebhookClient,
+  MessageMentions: { ROLES_PATTERN }
+} = require('discord.js')
+const client = new Client()
+const hook = new WebhookClient(process.env.VOICENOTIFY_WEBHOOK_ID, process.env.VOICENOTIFY_WEBHOOK_TOKEN)
 
-const DBL = require("dblapi.js");
-try {
-    const dbl_ = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, bot);
-} catch (ex) {
-    console.log(`Topgg error : ${ex}`);
-    hook.log(`Topgg error : ${ex}`);
+const log = (msg) => {
+  console.log(msg)
+  try {
+    hook.send(msg)
+  } catch {}
 }
 
-const Firebase = require("firebase-admin");
+const DBL = require('dblapi.js')
+try {
+  const _dbl = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, client)
+} catch (e) {
+  log(`Topgg error : ${e}`)
+}
+
+const Firebase = require('firebase-admin')
 Firebase.initializeApp({
-    credential: Firebase.credential.cert({
-        "client_email": process.env.VOICENOTIFY_FIREBASE_CLIENT_EMAIL,
-        "private_key": JSON.parse(`"${process.env.VOICENOTIFY_FIREBASE_PRIVATE_KEY}"`),
-        "project_id": process.env.VOICENOTIFY_FIREBASE_PROJECT_ID,
-    }),
-    databaseURL: process.env.VOICENOTIFY_FIREBASE_DATABASE_URL
-});
-const db = Firebase.database();
+  credential: Firebase.credential.cert({
+    client_email: process.env.VOICENOTIFY_FIREBASE_CLIENT_EMAIL,
+    private_key: JSON.parse(`"${process.env.VOICENOTIFY_FIREBASE_PRIVATE_KEY}"`),
+    project_id: process.env.VOICENOTIFY_FIREBASE_PROJECT_ID
+  }),
+  databaseURL: process.env.VOICENOTIFY_FIREBASE_DATABASE_URL
+})
+const db = Firebase.database()
 
-const pjson = require('./package.json');
+const { version } = require('./package.json')
 
-// Bot will be able to send & receive to Discord only after this
-bot.on("ready", () => {
-    console.log(`Bot (re)started, version ${pjson.version}`);
-    hook.send(`Bot (re)started, version ${pjson.version}`);
-    bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
-});
+const thresholdTimes = new Map() //last threshold time per channel
+const broadcastTimes = new Map() //last broadcast time per channel
 
-bot.on("guildCreate", guild => {
-    bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
-});
+client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }) => {
+  // exit if user is leaving a channel
+  if (!channel) return
 
-bot.on("guildDelete", guild => {
-    bot.user.setActivity(`${bot.guilds.cache.size} servers ⚡`, { type: 'WATCHING' });
-});
+  // exit if user changing mute/listen status
+  if (channel.id == oldChannel?.id) return
 
-let thresholdTimes = new Map(); //last threshold time per channel
-let broadcastTimes = new Map(); //last broadcast time per channel
+  // fetch channel settings from db
+  const settings = (await db.ref(guild.id).child(channel.id).once('value')).val()
+  if (!settings) return
 
-bot.on('voiceStateUpdate', async ({channel: oldChannel}, {channel, guild}) => {
+  // get text channel or delete if undefined (deleted channel)
+  const textChannel = guild.channels.cache.find((ch) => ch.id == settings.text)
+  if (!textChannel || textChannel.deleted) return await db.ref(guild.id).child(channel.id).remove()
 
-    try {
+  // exit if threshold is not reached
+  if (channel.members.array().length < settings.min) return
 
-        return db.ref(guild.id).once('value').then(function (snapshot) {
+  // get and set last threshold
+  const lastThreshold = broadcastTimes.get(channel.id)
+  thresholdTimes.set(channel.id, Date.now())
 
-            // get guild settings or exit if undefined
-            const guildSettings = snapshot.val();
-            if (!guildSettings) return;
+  // exit if threshold already reached <20m ago
+  if (lastThreshold && Date.now() - lastThreshold < 20 * 60 * 1000) return
 
-            // get channel settings or exit if undefined
-            const settings = guildSettings[channel?.id];
-            if (!settings) return;
+  // get last broadcast and exit if already sent <40m ago
+  const lastBroadcast = broadcastTimes.get(channel.id)
+  if (lastBroadcast && Date.now() - lastBroadcast < 40 * 60 * 1000) return
 
-            // get text channel or exit if undefined (deleted)
-            const textChannel = guild.channels.cache.find(ch => ch.id == settings.text);
-            if (!textChannel) return;
+  // set last broadcast
+  broadcastTimes.set(channel.id, Date.now())
 
-            // exit if user changing mute/listen status
-            if (channel?.id == oldChannel?.id) return;
+  // get potential roles to mention
+  const rolesList = settings.roles || ''
 
-            // exit if threshold is not reached
-            if (channel.members.array().length < settings.min) return;
+  // send message
+  textChannel.send(`**:microphone2: A voice chat is taking place in the "${channel.name}" channel !\n${rolesList}**`)
+})
 
-            // get and set last threshold 
-            const lastThreshold = broadcastTimes.get(channel.id)
-            thresholdTimes.set(channel.id, Date.now());
+client.on('message', async (msg) => {
+  const { member, guild, mentions, content, channel } = msg
 
-            // exit if threshold already reached <1h ago
-            if (lastThreshold && Date.now() - lastThreshold < 20 * 60 * 1000) return; 
+  if (!member || member.id == guild.me.id) return
+  if (!mentions?.has(guild.me, { ignoreEveryone: true })) return
+  if (!member.hasPermission('ADMINISTRATOR')) return msg.reply('you must be an administrator to use this bot.')
+  if (!member.voice?.channel) return msg.reply('you must be in a voice channel to use this bot.')
 
-            // exit if user is leaving a channel
-            if (!channel) return;
+  const [_prefix, command, ...params] = content.toLowerCase().split(/ +/g)
 
-            // get last broadcast and exit if already sent <1h ago
-            const lastBroadcast = broadcastTimes.get(channel.id)
-            if (lastBroadcast && Date.now() - lastBroadcast < 40 * 60 * 1000) return; 
-
-            // set last broadcast
-            broadcastTimes.set(channel.id, Date.now());
-
-            // get potential roles to mention
-            const rolesList = settings.roles && settings.roles.map(rl => ' <@&' + rl + '>'); //mention roles
-
-            // send message
-            textChannel.send(`**:microphone2: A voice chat is taking place in the "${channel.name}" channel !\n${rolesList}**`) //send message
-
-            const embedObj = {
-                "color": 16007990,
-                "author": {
-                    "name": "Click here to add MakePDF bot : Document to PDF converter.",
-                    "url": "https://discord.com/oauth2/authorize?client_id=689807933415882762&scope=bot&permissions=52224",
-                    "icon_url": "https://images.discordapp.net/avatars/689807933415882762/e8aaa78cc19cc41a2c3bee87ee716c7e.png"
-                }
-            }
-            //if (!guild.member("689807933415882762") && Math.random() < 0.33) textChannel.send({ embed: embedObj });
-
-        });
-
-    } catch (ex) {
-
-        console.log(`Error : ${ex}`);
-        hook.send(`Error : ${ex}`);
-
+  if (command == 'enable') {
+    const settings = {
+      text: parseInt(channel.id),
+      min: parseInt(/^\d+$/.test(params[0]) ? params[0] : 5),
+      roles: params?.toString().match(ROLES_PATTERN)
     }
+    await db.ref(guild.id).child(member.voice.channel.id).set(settings)
 
-});
+    return msg.reply(
+      `when ${settings.min} people or more are connected to "${
+        member.voice.channel.name
+      }", we will send an alert in <#${channel.id}> mentioning ${settings.roles?.length || '0'} role(s).`
+    )
+  }
 
-bot.on("message", async msg => {
+  if (command == 'disable') {
+    await db.ref(guild.id).child(member.voice.channel.id).remove()
+    return msg.reply(`notifications have been disabled for "${member.voice.channel.name}".`)
+  }
 
-    try {
+  return msg.reply(
+    `here are the bot commande to enable & disable voice chat notifications (administrators only) :
+                    
+                    \`@VoiceNotify enable [threshold] [roles]\`
+                    Enables voice chat notifications for the voice channel you are in, alerts will be sent to the channel where this command is executed.
+                    Optional : [threshold] to trigger an alert defaults to 5 people ; [roles] will be mentioned when the alert is sent.
+                                    
+                    \`@VoiceNotify disable\`
+                    Disables voice chat notifications for the voice channel you are in.`
+  )
+})
 
-        if (msg.author.bot) return;
-        if (!msg.mentions?.has(msg.guild.me, { ignoreEveryone: true })) return;
-        const args = msg.content?.toLowerCase().split(/ +/g);
+client.on('ready', () => {
+  log(`Bot (re)started, version ${version}`)
+  client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' })
+})
 
-        if (msg.member.hasPermission('ADMINISTRATOR')) {
+client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
+client.on('guildDelete', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
 
-            if (args[1] == "enable") {
+client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
+process.on('unhandledRejection', (e) => log(`Unhandled promise rejection: ${e}`))
 
-                if (!msg.member.voice?.channel) return msg.reply("you must be in a voice channel to do this.");
-
-                const threshold = (/^\d+$/.test(args[2])) ? args[2] : 5; //get threshold
-                const roles = msg.mentions.roles; //get roles
-
-                const dbGuild = db.ref(msg.guild.id); //get guild
-                const dbChannel = dbGuild.child(msg.member.voice.channel.id); //get voice channel
-
-                dbChannel.child("min").set(parseInt(threshold)); //set threshold
-                dbChannel.child("roles").set(roles.keyArray()); //set roles
-                dbChannel.child("text").set(parseInt(msg.channel.id)); //set text channel
-
-                return msg.reply(`when ${threshold} people or more are connected to "${msg.member.voice.channel.name}", we will send an alert in <#${msg.channel.id}> mentioning ${roles.size} role(s).`);
-
-            } else if (args[1] == "disable") {
-
-                if (!msg.member.voice?.channel) return msg.reply("you must be in a voice channel to do this.");
-
-                const dbGuild = db.ref(msg.guild.id); //get guild
-
-                dbGuild.child(msg.member.voice.channel.id).remove(); //delete voice channel
-
-                return msg.reply(`notifications have been disabled for "${msg.member.voice.channel.name}".`);
-
-            } else {
-
-                return msg.reply(`here are the bot commande to enable & disable voice chat notifications (administrators only) :
-
-\`@VoiceNotify enable [threshold] [roles]\`
-Enables voice chat notifications for the voice channel you are in, alerts will be sent to the channel where this command is executed.
-Optional : [threshold] to trigger an alert defaults to 5 people ; [roles] will be mentioned when the alert is sent.
-                
-\`@VoiceNotify disable\`
-Disables voice chat notifications for the voice channel you are in.`);
-
-            }
-
-        }
-
-    } catch (ex) {
-
-        console.log(`Error : ${ex}`);
-        hook.send(`Error : ${ex}`);
-
-    }
-
-});
-
-bot.login(process.env.VOICENOTIFY_DISCORD_TOKEN);
+client.login(process.env.VOICENOTIFY_DISCORD_TOKEN)
