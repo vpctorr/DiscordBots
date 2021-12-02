@@ -4,23 +4,17 @@
 
 require('dotenv').config()
 
-const { Client, WebhookClient, MessageAttachment } = require('discord.js')
+const { Client, WebhookClient, MessageAttachment, MessageEmbed } = require('discord.js')
 const client = new Client()
 const hook = new WebhookClient(process.env.MAKEPDF_WEBHOOK_ID, process.env.MAKEPDF_WEBHOOK_TOKEN)
 
 const log = (msg) => {
   console.log(msg)
-  try {
-    hook.send(msg)
-  } catch {}
+  hook.send(new MessageEmbed().setDescription(msg).setTitle('MakePDF – Debug').setColor('#ED4539')).catch(() => {})
 }
 
 const DBL = require('dblapi.js')
-try {
-  const _dbl = new DBL(process.env.MAKEPDF_TOPGG_TOKEN, client)
-} catch (e) {
-  log(`Topgg error : ${e}`)
-}
+const _dbl = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, client).on('error', () => {})
 
 const https = require('https')
 const libre = require('./convert')
@@ -77,6 +71,6 @@ client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.si
 client.on('guildDelete', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
-process.on('unhandledRejection', (e) => log(`Unhandled promise rejection: ${e}`))
+process.on('unhandledRejection', (e) => log(`Unhandled promise rejection: ${e?.stack || e}`))
 
 client.login(process.env.MAKEPDF_DISCORD_TOKEN)
