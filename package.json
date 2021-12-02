@@ -6,7 +6,8 @@
     "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
     "start": "npx pm2-runtime start pm2-apps.json",
     "format": "prettier --write '{MakePDF,VoiceNotify}/**/*.{js,jsx,ts,tsx}'",
-    "lint": "eslint MakePDF VoiceNotify --max-warnings=0 && prettier --check '{MakePDF,VoiceNotify}/**/*.{js,jsx,ts,tsx}'"
+    "lint": "eslint MakePDF VoiceNotify --max-warnings=0 && prettier --check '{MakePDF,VoiceNotify}/**/*.{js,jsx,ts,tsx}'",
+    "postversion": "cd MakePDF && npm version -- $npm_package_version && cd ../VoiceNotify && npm version -- $npm_package_version && cd ../ && git add -A && git commit -m \"Release v$npm_package_version\" && git push && git tag -a v$npm_package_version HEAD -m \"$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:'%h %s')\" && git push origin v$npm_package_version"
   },
   "repository": {
     "type": "git",

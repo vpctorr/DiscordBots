@@ -4,8 +4,7 @@
   "description": "",
   "main": "voicenotify.js",
   "scripts": {
-    "postinstall": "npm version $(git describe)",
-    "start": "node voicenotify"
+    "start": "node ."
   },
   "repository": {
     "type": "git",

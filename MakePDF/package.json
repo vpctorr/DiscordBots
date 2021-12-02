@@ -4,8 +4,7 @@
   "description": "",
   "main": "makepdf.js",
   "scripts": {
-    "postinstall": "npm version $(git describe)",
-    "start": "node makepdf"
+    "start": "node ."
   },
   "repository": {
     "type": "git",
