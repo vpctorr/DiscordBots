@@ -132,6 +132,9 @@ client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.si
 client.on('guildDelete', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
-process.on('unhandledRejection', (e) => log(`Unhandled promise rejection: ${e?.stack || e}`))
+process.on(
+  'unhandledRejection',
+  (e) => e.code != '50013' && log(`Unhandled promise rejection:\n\n${e.stack}\n\n${JSON.stringify(e)}`)
+)
 
 client.login(process.env.VOICENOTIFY_DISCORD_TOKEN)
