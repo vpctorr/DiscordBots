@@ -137,7 +137,7 @@ client.on('guildDelete', ({ id }) => {
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
 process.on(
   'unhandledRejection',
-  (e) => e.code != '50013' && log(`Unhandled promise rejection:\n\n${e.stack}\n\n${JSON.stringify(e)}`)
+  (e) => e.code != 50013 && e.code != 50001 && log(`Unhandled promise rejection:\n\n${e.stack}\n\n${JSON.stringify(e)}`)
 )
 
 client.login(process.env.VOICENOTIFY_DISCORD_TOKEN)
