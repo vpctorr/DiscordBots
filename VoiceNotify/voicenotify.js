@@ -52,8 +52,8 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   if (!settings) return
 
   // get text channel or delete if undefined (deleted channel)
-  const textCh = guild.channels.cache.find((ch) => ch.id == settings.text)
-  if (!textCh || !textCh.isText || textCh.deleted) return await db.ref(guild.id).child(channel.id).remove()
+  const textCh = await guild.channels.cache.find((ch) => ch.id == settings.text)
+  if (!textCh?.isText() || textCh?.deleted) return db.ref(guild.id).child(channel.id).remove()
 
   // exit if threshold is not reached
   if (channel.members.array().length < settings.min) return
@@ -90,7 +90,7 @@ client.on('message', async (msg) => {
 
   switch (command) {
     case 'enable' || 'disable':
-      if (!member.voice?.channel) return msg.reply('you must be in a voice channel to use this bot.')
+      if (!member.voice?.channel?.id) return msg.reply('you must be in a voice channel to use this bot.')
 
     case 'enable':
       const settings = {
@@ -129,7 +129,10 @@ client.on('ready', () => {
 })
 
 client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
-client.on('guildDelete', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
+client.on('guildDelete', ({ id }) => {
+  client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' })
+  db.ref(id).remove()
+})
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
 process.on(
