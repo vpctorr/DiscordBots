@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-case-declarations */
+/* eslint-disable no-multi-assign */
 /* eslint-disable no-fallthrough */
 /* eslint-disable import/order */
 /* eslint-disable eqeqeq */
@@ -40,6 +41,30 @@ const { version } = require('./package.json')
 const thresholdTimes = new Map() //last threshold time per channel
 const broadcastTimes = new Map() //last broadcast time per channel
 
+// settings management
+const manager = {
+  cache: {},
+  get: async (g, c) => (c ? (await manager.get(g))[c] : (manager.cache[g] ||= (await db.ref(g).once('value')).val())),
+  set: async (g, c, s) =>
+    s &&
+    (await db
+      .ref(g)
+      .child(c)
+      .set(s)
+      .then(async () => (await manager.get(g)) && (manager.cache[g][c] = s))),
+  del: async (g, c) =>
+    c
+      ? await db
+          .ref(g)
+          .child(c)
+          .remove()
+          .then(() => delete manager.cache[g]?.[c])
+      : await db
+          .ref(g)
+          .remove()
+          .then(() => delete manager.cache[g])
+}
+
 client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }) => {
   // exit if user is leaving a channel
   if (!channel) return
@@ -48,12 +73,12 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   if (channel.id == oldChannel?.id) return
 
   // fetch channel settings from db
-  const settings = (await db.ref(guild.id).child(channel.id).once('value')).val()
+  const settings = await manager.get(guild.id, channel.id)
   if (!settings) return
 
   // get text channel or delete if undefined (deleted channel)
   const textCh = await guild.channels.cache.find((ch) => ch.id == settings.text)
-  if (!textCh?.isText() || textCh?.deleted) return db.ref(guild.id).child(channel.id).remove()
+  if (!textCh?.isText() || textCh?.deleted) return manager.del(guild.id, channel.id)
 
   // exit if threshold is not reached
   if (channel.members.array().length < settings.min) return
@@ -99,7 +124,7 @@ client.on('message', async (msg) => {
         min: parseInt(/^\d+$/.test(params[0]) ? params[0] : 5),
         roles: params?.toString().match(ROLES_PATTERN)
       }
-      await db.ref(guild.id).child(member.voice.channel.id).set(settings)
+      await manager.set(guild.id, member.voice.channel.id, settings)
       return msg.reply(
         `when ${settings.min} people or more are connected to "${
           member.voice.channel.name
@@ -107,7 +132,7 @@ client.on('message', async (msg) => {
       )
 
     case 'disable':
-      await db.ref(guild.id).child(member.voice.channel.id).remove()
+      await manager.del(guild.id, member.voice.channel.id)
       return msg.reply(`notifications have been disabled for "${member.voice.channel.name}".`)
 
     default:
@@ -132,7 +157,7 @@ client.on('ready', () => {
 client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
 client.on('guildDelete', ({ id }) => {
   client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' })
-  db.ref(id).remove()
+  manager.del(id)
 })
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
