@@ -91,7 +91,7 @@ client.on('message', async (msg) => {
 
   switch (command) {
     case 'enable' || 'disable':
-      if (!member.voice?.channel?.id) return msg.reply('you must be in a voice channel to use this bot.')
+      if (member.voice.channel?.id.length <= 0) return msg.reply('you must be in a voice channel to use this bot.')
 
     case 'enable':
       const settings = {
