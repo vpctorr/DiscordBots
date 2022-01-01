@@ -45,7 +45,7 @@ const broadcastTimes = new Map() //last broadcast time per channel
 // settings management
 const manager = {
   cache: {},
-  get: async (g, c) => (c ? (await manager.get(g))[c] : (manager.cache[g] ||= (await db.ref(g).once('value')).val())),
+  get: async (g, c) => (c ? (await manager.get(g))?.[c] : (manager.cache[g] ||= (await db.ref(g).once('value')).val())),
   set: async (g, c, s) =>
     s &&
     (await db
