@@ -37,6 +37,7 @@ Firebase.initializeApp({
 const db = Firebase.database()
 
 const { version } = require('./package.json')
+const lastRestart = Date.now()
 
 const thresholdTimes = new Map() //last threshold time per channel
 const broadcastTimes = new Map() //last broadcast time per channel
@@ -134,6 +135,22 @@ client.on('message', async (msg) => {
     case 'disable':
       await manager.del(guild.id, member.voice.channel.id)
       return msg.reply(`notifications have been disabled for "${member.voice.channel.name}".`)
+
+    case 'debug':
+      return msg.reply(
+        new MessageEmbed().setTitle('VoiceNotify – Debug').setColor('#08C754').setDescription(`
+              **version :** VoiceNotify v${version}
+              **time :** ${Date.now()}
+              **lastRestart :** ${lastRestart}
+              **guildId :** ${guild.id}
+              **memberId :** ${member.id}
+              **textChannelId :** ${channel.id}
+              **voiceChannelId :** ${member.voice?.channel?.id}
+              **lastThreshold :** ${thresholdTimes.get(member.voice?.channel?.id)}
+              **lastBroadcast :** ${broadcastTimes.get(member.voice?.channel?.id)}
+              **guildSettings :**\n${JSON.stringify(await manager.get(guild.id))}
+            `)
+      )
 
     default:
       return msg.reply(`

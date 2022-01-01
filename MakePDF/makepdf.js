@@ -20,11 +20,24 @@ const https = require('https')
 const libre = require('./convert')
 
 const { version } = require('./package.json')
+const lastRestart = Date.now()
 
 client.on('message', async (msg) => {
-  const { author, attachments, channel } = msg
+  const { author, attachments, channel, content } = msg
 
   if (author.id == client.user.id) return
+
+  if (content.includes('debug'))
+    return msg.reply(
+      new MessageEmbed().setTitle('MakePDF – Debug').setColor('#ED4539').setDescription(`
+          **version :** MakePDF v${version}
+          **time :** ${Date.now()}
+          **lastRestart :** ${lastRestart}
+          **guildId :** ${msg.guild?.id}
+          **memberId :** ${author.id}
+          **channelId :** ${channel.id}
+        `)
+    )
 
   const filesArray = attachments.array()
 
