@@ -62,12 +62,13 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   const lastThreshold = thresholdTimes.get(channel.id)
   thresholdTimes.set(channel.id, Date.now())
 
-  // exit if threshold already reached <20m ago
-  if (lastThreshold && Date.now() - lastThreshold < 20 * 60 * 1000) return
+  // exit if threshold already reached recently
+  // (progressive antispam depending on set threshold: 1p = 5m, 2p = 2.5m, 5p = 1m, 10p = 30s...)
+  if (lastThreshold && Date.now() - lastThreshold < (5 / settings.min) * 60 * 1000) return
 
-  // get last broadcast and exit if already sent <40m ago
+  // get last broadcast and exit if already sent <10m ago
   const lastBroadcast = broadcastTimes.get(channel.id)
-  if (lastBroadcast && Date.now() - lastBroadcast < 40 * 60 * 1000) return
+  if (lastBroadcast && Date.now() - lastBroadcast < 10 * 60 * 1000) return
 
   // set last broadcast
   broadcastTimes.set(channel.id, Date.now())
