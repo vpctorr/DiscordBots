@@ -59,7 +59,7 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   if (channel.members.array().length < settings.min) return
 
   // get and set last threshold
-  const lastThreshold = broadcastTimes.get(channel.id)
+  const lastThreshold = thresholdTimes.get(channel.id)
   thresholdTimes.set(channel.id, Date.now())
 
   // exit if threshold already reached <20m ago
