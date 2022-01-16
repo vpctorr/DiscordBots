@@ -9,6 +9,7 @@
 import 'dotenv/config'
 
 import { Client, WebhookClient, MessageMentions, MessageEmbed } from 'discord.js'
+import { request } from 'https'
 
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getDatabase } from 'firebase-admin/database'
@@ -160,15 +161,32 @@ Disables voice chat notifications for the voice channel you are in.
   }
 })
 
+const updateGuildCount = (server_count) => {
+  client.user.setActivity(`${server_count} servers ⚡`, { type: 'WATCHING' })
+  request({
+    hostname: 'top.gg',
+    port: 443,
+    path: `/api/bots/${process.env.VOICENOTIFY_BOT_ID}/stats`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `${process.env.VOICENOTIFY_TOPGG_TOKEN}`
+    }
+  }).end(
+    JSON.stringify({
+      server_count
+    })
+  )
+}
+
 client.on('ready', () => {
   log(`Bot (re)started, version ${info.version}`)
-  client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' })
+  updateGuildCount(client.guilds.cache.size)
 })
-
-client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
+client.on('guildCreate', () => updateGuildCount(client.guilds.cache.size))
 client.on('guildDelete', ({ id }) => {
-  client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' })
   manager.del(id)
+  updateGuildCount(client.guilds.cache.size)
 })
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
