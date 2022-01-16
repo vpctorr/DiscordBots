@@ -4,7 +4,7 @@
 
 MakePDF is a Discord bot that automatically converts word processing, spreadsheet and presentation documents to PDF.
 
-[You can also directly add the bot here](https://discord.com/oauth2/authorize?client_id=689807933415882762&scope=bot&permissions=52224)
+[You can also directly add the bot here](https://discord.com/oauth2/authorize?client_id=932278614911766599&scope=bot&permissions=52224)
 
 ## Setting it up
 

@@ -24,7 +24,7 @@ Disables voice chat notifications for the voice channel you are in.
 
 MakePDF is a Discord bot that automatically converts word processing, spreadsheet and presentation documents to PDF.
 
-[Add to Discord](https://discord.com/oauth2/authorize?client_id=689807933415882762&scope=bot&permissions=52224)  •  [Self-hosting](https://github.com/vpctorr/DiscordBots/tree/main/MakePDF)
+[Add to Discord](https://discord.com/oauth2/authorize?client_id=932278614911766599&scope=bot&permissions=52224)  •  [Self-hosting](https://github.com/vpctorr/DiscordBots/tree/main/MakePDF)
 
 ### Common formats are supported :
 
