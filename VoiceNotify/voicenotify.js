@@ -105,7 +105,7 @@ client.on('message', async (msg) => {
 
   switch (command) {
     case 'enable' || 'disable':
-      if (member.voice.channelID) return msg.reply('you must be in a voice channel to use this bot.')
+      if (!member.voice.channelID) return msg.reply('you must be in a voice channel to use this bot.')
 
     case 'enable':
       const settings = {
@@ -133,9 +133,9 @@ client.on('message', async (msg) => {
               **guildId :** ${guild.id}
               **memberId :** ${member.id}
               **textChannelId :** ${channel.id}
-              **voiceChannelId :** ${member.voice?.channel?.id}
-              **lastThreshold :** ${thresholdTimes.get(member.voice?.channel?.id)}
-              **lastBroadcast :** ${broadcastTimes.get(member.voice?.channel?.id)}
+              **voiceChannelId :** ${member.voice?.channelID}
+              **lastThreshold :** ${thresholdTimes.get(member.voice?.channelID)}
+              **lastBroadcast :** ${broadcastTimes.get(member.voice?.channelID)}
               **guildSettings :**\n${JSON.stringify(await manager.get(guild.id))}
             `)
       )
