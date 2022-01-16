@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 
 import { Client, WebhookClient, MessageAttachment, MessageEmbed } from 'discord.js'
-import { get } from 'https'
+import { get, request } from 'https'
 
 import { convert } from './convert.js'
 import info from './package.json'
@@ -72,12 +72,30 @@ client.on('message', async (msg) => {
     })
 })
 
+const updateGuildCount = (server_count) => {
+  client.user.setActivity(`${server_count} servers ⚡`, { type: 'WATCHING' })
+  request({
+    hostname: 'top.gg',
+    port: 443,
+    path: `/api/bots/${process.env.MAKEPDF_BOT_ID}/stats`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `${process.env.MAKEPDF_TOPGG_TOKEN}`
+    }
+  }).end(
+    JSON.stringify({
+      server_count
+    })
+  )
+}
+
 client.on('ready', () => {
   log(`Bot (re)started, version ${info.version}`)
+  updateGuildCount(client.guilds.cache.size)
 })
-
-client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
-client.on('guildDelete', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
+client.on('guildCreate', () => updateGuildCount(client.guilds.cache.size))
+client.on('guildDelete', () => updateGuildCount(client.guilds.cache.size))
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
 process.on(
