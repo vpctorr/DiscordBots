@@ -6,14 +6,15 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable radix */
 
-require('dotenv').config()
+import 'dotenv/config'
 
-const {
-  Client,
-  WebhookClient,
-  MessageMentions: { ROLES_PATTERN },
-  MessageEmbed
-} = require('discord.js')
+import { Client, WebhookClient, MessageMentions, MessageEmbed } from 'discord.js'
+
+import { initializeApp, cert } from 'firebase-admin/app'
+import { getDatabase } from 'firebase-admin/database'
+
+import info from './package.json'
+
 const client = new Client()
 const hook = new WebhookClient(process.env.VOICENOTIFY_WEBHOOK_ID, process.env.VOICENOTIFY_WEBHOOK_TOKEN)
 
@@ -21,22 +22,15 @@ const log = (msg) => {
   console.log(msg)
   hook.send(new MessageEmbed().setDescription(msg).setTitle('VoiceNotify – Debug').setColor('#08C754')).catch(() => {})
 }
-
-const DBL = require('dblapi.js')
-const _dbl = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, client).on('error', () => {})
-
-const Firebase = require('firebase-admin')
-Firebase.initializeApp({
-  credential: Firebase.credential.cert({
-    client_email: process.env.VOICENOTIFY_FIREBASE_CLIENT_EMAIL,
-    private_key: JSON.parse(`"${process.env.VOICENOTIFY_FIREBASE_PRIVATE_KEY}"`),
-    project_id: process.env.VOICENOTIFY_FIREBASE_PROJECT_ID
+initializeApp({
+  credential: cert({
+    clientEmail: process.env.VOICENOTIFY_FIREBASE_CLIENT_EMAIL,
+    privateKey: JSON.parse(`"${process.env.VOICENOTIFY_FIREBASE_PRIVATE_KEY}"`),
+    projectId: process.env.VOICENOTIFY_FIREBASE_PROJECT_ID
   }),
   databaseURL: process.env.VOICENOTIFY_FIREBASE_DATABASE_URL
 })
-const db = Firebase.database()
-
-const { version } = require('./package.json')
+const db = getDatabase()
 const lastRestart = Date.now()
 
 const thresholdTimes = new Map() //last threshold time per channel
@@ -122,8 +116,8 @@ client.on('message', async (msg) => {
     case 'enable':
       const settings = {
         text: parseInt(channel.id),
-        min: parseInt(/^\d+$/.test(params[0]) ? params[0] : 5),
-        roles: params?.toString().match(ROLES_PATTERN)
+        min: parseInt(/^\d+$/.test(params[0]) ? params[0] : '5'),
+        roles: params?.toString().match(MessageMentions.ROLES_PATTERN)
       }
       await manager.set(guild.id, member.voice.channel.id, settings)
       return msg.reply(
@@ -139,7 +133,7 @@ client.on('message', async (msg) => {
     case 'debug':
       return msg.reply(
         new MessageEmbed().setTitle('VoiceNotify – Debug').setColor('#08C754').setDescription(`
-              **version :** VoiceNotify v${version}
+              **version :** VoiceNotify v${info.version}
               **time :** ${Date.now()}
               **lastRestart :** ${lastRestart}
               **guildId :** ${guild.id}
@@ -167,7 +161,7 @@ Disables voice chat notifications for the voice channel you are in.
 })
 
 client.on('ready', () => {
-  log(`Bot (re)started, version ${version}`)
+  log(`Bot (re)started, version ${info.version}`)
   client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' })
 })
 
@@ -179,7 +173,7 @@ client.on('guildDelete', ({ id }) => {
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
 process.on(
-  'unhandledRejection',
+  'unhandledRejection', //@ts-ignore
   (e) => e.code != 50013 && e.code != 50001 && log(`Unhandled promise rejection:\n\n${e.stack}\n\n${JSON.stringify(e)}`)
 )
 

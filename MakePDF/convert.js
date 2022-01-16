@@ -1,20 +1,18 @@
-'use strict'
-
-const async = require('async')
-const { execFile } = require('child_process')
-const fs = require('fs')
-const path = require('path')
-const tmp = require('tmp')
+import async from 'async'
+import { execFile } from 'child_process'
+import { access, writeFile, readFile } from 'fs'
+import { join } from 'path'
+import { dirSync } from 'tmp'
 
 const convertWithOptions = (document, format, filter, options, callback) => {
   const tmpOptions = (options || {}).tmpOptions || {}
   const asyncOptions = (options || {}).asyncOptions || {}
-  const tempDir = tmp.dirSync({
+  const tempDir = dirSync({
     prefix: 'libreofficeConvert_',
     unsafeCleanup: true,
     ...tmpOptions
   })
-  const installDir = tmp.dirSync({
+  const installDir = dirSync({
     prefix: 'soffice',
     unsafeCleanup: true,
     ...tmpOptions
@@ -37,9 +35,9 @@ const convertWithOptions = (document, format, filter, options, callback) => {
             break
           case 'win32':
             paths = [
-              path.join(process.env['PROGRAMFILES(X86)'], 'LIBREO~1/program/soffice.exe'),
-              path.join(process.env['PROGRAMFILES(X86)'], 'LibreOffice/program/soffice.exe'),
-              path.join(process.env.PROGRAMFILES, 'LibreOffice/program/soffice.exe')
+              join(process.env['PROGRAMFILES(X86)'], 'LIBREO~1/program/soffice.exe'),
+              join(process.env['PROGRAMFILES(X86)'], 'LibreOffice/program/soffice.exe'),
+              join(process.env.PROGRAMFILES, 'LibreOffice/program/soffice.exe')
             ]
             break
           default:
@@ -48,7 +46,7 @@ const convertWithOptions = (document, format, filter, options, callback) => {
 
         return async.filter(
           paths,
-          (filePath, callback) => fs.access(filePath, (err) => callback(null, !err)),
+          (filePath, callback) => access(filePath, (err) => callback(null, !err)),
           (err, res) => {
             if (err || res.length === 0) {
               return callback(new Error('Could not find soffice binary'))
@@ -58,7 +56,7 @@ const convertWithOptions = (document, format, filter, options, callback) => {
           }
         )
       },
-      saveSource: (callback) => fs.writeFile(path.join(tempDir.name, 'source'), document, callback),
+      saveSource: (callback) => writeFile(join(tempDir.name, 'source'), document, callback),
       convert: [
         'soffice',
         'saveSource',
@@ -67,7 +65,7 @@ const convertWithOptions = (document, format, filter, options, callback) => {
           if (filter !== undefined) {
             command += `:"${filter}"`
           }
-          command += ` --outdir ${tempDir.name} ${path.join(tempDir.name, 'source')}`
+          command += ` --outdir ${tempDir.name} ${join(tempDir.name, 'source')}`
           const args = command.split(' ')
           return execFile(results.soffice, args, callback)
         }
@@ -80,7 +78,7 @@ const convertWithOptions = (document, format, filter, options, callback) => {
               times: asyncOptions.times || 3,
               interval: asyncOptions.interval || 200
             },
-            (callback) => fs.readFile(path.join(tempDir.name, `source.${format.split(':')[0]}`), callback),
+            (callback) => readFile(join(tempDir.name, `source.${format.split(':')[0]}`), callback),
             callback
           )
       ]
@@ -102,7 +100,4 @@ const convert = (document, format, filter, callback) => {
   return convertWithOptions(document, format, filter, {}, callback)
 }
 
-module.exports = {
-  convert,
-  convertWithOptions
-}
+export { convert, convertWithOptions }

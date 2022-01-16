@@ -4,7 +4,7 @@
   "description": "",
   "main": "makepdf.js",
   "scripts": {
-    "start": "node ."
+    "start": "node --experimental-json-modules ."
   },
   "repository": {
     "type": "git",
@@ -17,10 +17,12 @@
     "url": "https://github.com/vpctorr/DiscordBots/issues"
   },
   "dependencies": {
-    "dblapi.js": "^2.4.0",
+    "async": "^3.2.3",
     "discord.js": "^12.5.3",
-    "dotenv": "^8.6.0",
-    "async": "^2.6.2",
     "tmp": "^0.2.1"
-  }
+  },
+  "devDependencies": {
+    "dotenv": "^12.0.4"
+  },
+  "type": "module"
 }
