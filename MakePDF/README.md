@@ -9,15 +9,19 @@ MakePDF is a Discord bot that automatically converts word processing, spreadshee
 ## Setting it up
 
 Install LibreOffice (Windows/Mac : Use the regular installer | Linux/Others : See below)
+
 ```
 sudo apt-get install libreoffice-core --no-install-recommends
 ```
+
 You MUST run this with environment variables, or alternatively use a `.env` file as follows
 Set the desired formats allowed for conversion with the `MAKEPDF_SETTINGS_FORMATS` property
+
 ```
 MAKEPDF_DISCORD_TOKEN=your_discord_token
 MAKEPDF_SETTINGS_FORMATS=doc,docx,odt,rtf,ppt,pps,pptx,ppsx,odp,xls,xlsx,ods,csv
 ```
+
 Then install the bot with `npm install` & start it with `npm start`
 You might want to use a process manager such as PM2 to keep the bot running
 

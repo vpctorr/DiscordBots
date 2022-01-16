@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable import/order */
 /* eslint-disable eqeqeq */
 
-require('dotenv').config()
+import { Client, WebhookClient, MessageAttachment, MessageEmbed } from 'discord.js'
+import { get } from 'https'
 
-const { Client, WebhookClient, MessageAttachment, MessageEmbed } = require('discord.js')
+import { convert } from './convert.js'
+import info from './package.json'
 const client = new Client()
 const hook = new WebhookClient(process.env.MAKEPDF_WEBHOOK_ID, process.env.MAKEPDF_WEBHOOK_TOKEN)
 
@@ -12,14 +12,6 @@ const log = (msg) => {
   console.log(msg)
   hook.send(new MessageEmbed().setDescription(msg).setTitle('MakePDF – Debug').setColor('#ED4539')).catch(() => {})
 }
-
-const DBL = require('dblapi.js')
-const _dbl = new DBL(process.env.VOICENOTIFY_TOPGG_TOKEN, client).on('error', () => {})
-
-const https = require('https')
-const libre = require('./convert')
-
-const { version } = require('./package.json')
 const lastRestart = Date.now()
 
 client.on('message', async (msg) => {
@@ -35,7 +27,7 @@ client.on('message', async (msg) => {
     )
       return msg.reply(
         new MessageEmbed().setTitle('MakePDF – Debug').setColor('#ED4539').setDescription(`
-          **version :** MakePDF v${version}
+          **version :** MakePDF v${info.version}
           **time :** ${Date.now()}
           **lastRestart :** ${lastRestart}
           **guildId :** ${msg.guild?.id}
@@ -55,7 +47,7 @@ client.on('message', async (msg) => {
 
       if (!formats.includes(extension)) return
 
-      https.get(url, (res) => {
+      get(url, (res) => {
         const bufs = []
         res.on('data', (chunk) => bufs.push(chunk))
         res.on('error', (err) => {
@@ -65,7 +57,7 @@ client.on('message', async (msg) => {
         res.on('end', () => {
           const fileData = Buffer.concat(bufs)
 
-          libre.convert(fileData, '.pdf', undefined, (err, pdfData) => {
+          convert(fileData, '.pdf', undefined, (err, pdfData) => {
             if (err) {
               channel.send(`Sorry, the conversion has failed :cry:`)
               return log(`Error converting file : ${err}`)
@@ -81,8 +73,7 @@ client.on('message', async (msg) => {
 })
 
 client.on('ready', () => {
-  log(`Bot (re)started, version ${version}`)
-  client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' })
+  log(`Bot (re)started, version ${info.version}`)
 })
 
 client.on('guildCreate', () => client.user.setActivity(`${client.guilds.cache.size} servers ⚡`, { type: 'WATCHING' }))
@@ -90,7 +81,7 @@ client.on('guildDelete', () => client.user.setActivity(`${client.guilds.cache.si
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
 process.on(
-  'unhandledRejection',
+  'unhandledRejection', //@ts-ignore
   (e) => e.code != 50013 && e.code != 50001 && log(`Unhandled promise rejection:\n\n${e.stack}\n\n${JSON.stringify(e)}`)
 )
 

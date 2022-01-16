@@ -4,7 +4,7 @@
   "description": "",
   "main": "voicenotify.js",
   "scripts": {
-    "start": "node ."
+    "start": "node -r dotenv/config --experimental-json-modules ."
   },
   "repository": {
     "type": "git",
@@ -17,9 +17,11 @@
     "url": "https://github.com/vpctorr/DiscordBots/issues"
   },
   "dependencies": {
-    "dblapi.js": "^2.4.0",
     "discord.js": "^12.5.3",
-    "dotenv": "^8.6.0",
-    "firebase-admin": "^8.13.0"
-  }
+    "firebase-admin": "^10.0.1"
+  },
+  "devDependencies": {
+    "dotenv": "^12.0.4"
+  },
+  "type": "module"
 }
