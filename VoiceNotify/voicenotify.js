@@ -105,7 +105,7 @@ client.on('message', async (msg) => {
 
   switch (command) {
     case 'enable' || 'disable':
-      if (member.voice.channel?.id.length <= 0) return msg.reply('you must be in a voice channel to use this bot.')
+      if (member.voice.channelID) return msg.reply('you must be in a voice channel to use this bot.')
 
     case 'enable':
       const settings = {
@@ -113,7 +113,7 @@ client.on('message', async (msg) => {
         min: Number(/^\d+$/.test(params[0]) ? params[0] : '5'),
         roles: params?.toString().match(MessageMentions.ROLES_PATTERN)
       }
-      await manager.set(guild.id, member.voice.channel.id, settings)
+      await manager.set(guild.id, member.voice.channelID, settings)
       return msg.reply(
         `when ${settings.min} people or more are connected to "${
           member.voice.channel.name
@@ -121,7 +121,7 @@ client.on('message', async (msg) => {
       )
 
     case 'disable':
-      await manager.del(guild.id, member.voice.channel.id)
+      await manager.del(guild.id, member.voice.channelID)
       return msg.reply(`notifications have been disabled for "${member.voice.channel.name}".`)
 
     case 'debug':
