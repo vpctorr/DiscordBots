@@ -15,7 +15,7 @@ Firebase Realtime Database is used to store channel data, fill the `FIREBASE` pr
 VOICENOTIFY_DISCORD_TOKEN=your_discord_token
 VOICENOTIFY_FIREBASE_CLIENT_EMAIL=your_firebase_client_email
 VOICENOTIFY_FIREBASE_PRIVATE_KEY='your_firebase_private_key'
-VOICENOTIFY_FIREBASE_PROJET_ID=your_firebase_project_id
+VOICENOTIFY_FIREBASE_PROJECT_ID=your_firebase_project_id
 VOICENOTIFY_FIREBASE_DATABASE_URL=your_firebase_database_url
 ```
 
