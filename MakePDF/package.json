@@ -22,7 +22,7 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "dotenv": "^12.0.4"
+    "dotenv": "^16.0.0"
   },
   "type": "module"
 }

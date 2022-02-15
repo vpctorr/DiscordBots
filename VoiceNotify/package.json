@@ -18,10 +18,10 @@
   },
   "dependencies": {
     "discord.js": "^12.5.3",
-    "firebase-admin": "^10.0.1"
+    "firebase-admin": "^10.0.2"
   },
   "devDependencies": {
-    "dotenv": "^12.0.4"
+    "dotenv": "^16.0.0"
   },
   "type": "module"
 }
