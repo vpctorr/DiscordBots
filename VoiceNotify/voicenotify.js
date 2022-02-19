@@ -5,9 +5,10 @@
 import { Client, WebhookClient, MessageMentions, MessageEmbed } from 'discord.js'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getDatabase } from 'firebase-admin/database'
+import fs from 'fs'
 import { request } from 'https'
 
-import info from './package.json'
+const packageJson = JSON.parse(fs.readFileSync('package.json'))
 
 const client = new Client()
 const hook = new WebhookClient(process.env.VOICENOTIFY_WEBHOOK_ID, process.env.VOICENOTIFY_WEBHOOK_TOKEN)
@@ -91,7 +92,7 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   const rolesList = settings.roles || ''
 
   // send message
-  textCh.send(`**:microphone2: A voice chat is taking place in the "${channel.name}" channel !\n${rolesList}**`)
+  textCh.send(`\`🎙️\` A voice chat is taking place in "**${channel.name}**"!\n${rolesList}`)
 })
 
 client.on('message', async (msg) => {
@@ -127,7 +128,7 @@ client.on('message', async (msg) => {
     case 'debug':
       return msg.reply(
         new MessageEmbed().setTitle('VoiceNotify – Debug').setColor('#08C754').setDescription(`
-              **version :** VoiceNotify v${info.version}
+              **version :** VoiceNotify v${packageJson.version}
               **time :** ${Date.now()}
               **lastRestart :** ${lastRestart}
               **guildId :** ${guild.id}
@@ -173,7 +174,7 @@ const updateGuildCount = (server_count) => {
 }
 
 client.on('ready', () => {
-  log(`Bot (re)started, version ${info.version}`)
+  log(`Bot (re)started, version ${packageJson.version}`)
   updateGuildCount(client.guilds.cache.size)
 })
 client.on('guildCreate', () => updateGuildCount(client.guilds.cache.size))

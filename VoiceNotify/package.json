@@ -4,7 +4,7 @@
   "description": "",
   "main": "voicenotify.js",
   "scripts": {
-    "start": "node -r dotenv/config --experimental-json-modules ."
+    "start": "node -r dotenv/config ."
   },
   "repository": {
     "type": "git",
