@@ -40,7 +40,7 @@
     "printWidth": 120
   },
   "dependencies": {
-    "pm2": "^5.1.2"
+    "pm2": "^5.2.0"
   },
   "engines": {
     "node": "16.x",
