@@ -26,12 +26,7 @@ const convertWithOptions = (document, format, filter, options, callback) => {
             paths = ['/Applications/LibreOffice.app/Contents/MacOS/soffice']
             break
           case 'linux':
-            paths = [
-              '/app/vendor/libreoffice/usr/bin/libreoffice7.2',
-              '/usr/bin/libreoffice',
-              '/usr/bin/soffice',
-              '/snap/bin/libreoffice'
-            ] //
+            paths = [process.env.OFFICE_PATH, '/usr/bin/libreoffice', '/usr/bin/soffice', '/snap/bin/libreoffice']
             break
           case 'win32':
             paths = [
