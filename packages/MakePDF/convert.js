@@ -27,11 +27,11 @@ const convertWithOptions = (document, format, filter, options, callback) => {
             break
           case 'linux':
             paths = [
-              '/app/vendor/libreoffice/usr/bin/libreoffice7.2',
+              process.env.OFFICE_PATH.replace('opt', 'usr/bin'),
               '/usr/bin/libreoffice',
               '/usr/bin/soffice',
               '/snap/bin/libreoffice'
-            ] //
+            ]
             break
           case 'win32':
             paths = [
