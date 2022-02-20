@@ -5,6 +5,7 @@ import { get, request } from 'https'
 
 import { convert } from './convert.js'
 import info from './package.json' assert { type: 'json' }
+const version = (process.env.HEROKU_DEV && process.env.HEROKU_SLUG_DESCRIPTION) || info.version
 const client = new Client()
 const hook = new WebhookClient(process.env.MAKEPDF_WEBHOOK_ID, process.env.MAKEPDF_WEBHOOK_TOKEN)
 
@@ -27,7 +28,7 @@ client.on('message', async (msg) => {
     )
       return msg.reply(
         new MessageEmbed().setTitle('MakePDF – Debug').setColor('#ED4539').setDescription(`
-          **version :** MakePDF v${info.version}
+          **version :** MakePDF v${version}
           **time :** ${Date.now()}
           **lastRestart :** ${lastRestart}
           **guildId :** ${msg.guild?.id}
@@ -74,24 +75,25 @@ client.on('message', async (msg) => {
 
 const updateGuildCount = (server_count) => {
   client.user.setActivity(`${server_count} servers ⚡`, { type: 'WATCHING' })
-  request({
-    hostname: 'top.gg',
-    port: 443,
-    path: `/api/bots/${process.env.MAKEPDF_BOT_ID}/stats`,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `${process.env.MAKEPDF_TOPGG_TOKEN}`
-    }
-  }).end(
-    JSON.stringify({
-      server_count
-    })
-  )
+  process.env.MAKEPDF_TOPGG_TOKEN &&
+    request({
+      hostname: 'top.gg',
+      port: 443,
+      path: `/api/bots/${process.env.MAKEPDF_BOT_ID}/stats`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${process.env.MAKEPDF_TOPGG_TOKEN}`
+      }
+    }).end(
+      JSON.stringify({
+        server_count
+      })
+    )
 }
 
 client.on('ready', () => {
-  log(`Bot (re)started, version ${info.version}`)
+  log(`Bot (re)started, version ${version}`)
   updateGuildCount(client.guilds.cache.size)
 })
 client.on('guildCreate', () => updateGuildCount(client.guilds.cache.size))
@@ -99,7 +101,7 @@ client.on('guildDelete', () => updateGuildCount(client.guilds.cache.size))
 
 client.on('shardError', (e) => log(`Websocket connection error: ${e}`))
 process.on(
-  'unhandledRejection', //@ts-ignore
+  'unhandledRejection',
   (e) => e.code != 50013 && e.code != 50001 && log(`Unhandled promise rejection:\n\n${e.stack}\n\n${JSON.stringify(e)}`)
 )
 
