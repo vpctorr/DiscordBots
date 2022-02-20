@@ -1,0 +1,23 @@
+{
+  "bootstrap-sha": "67e7e7748545460add1acd2ec9a1ad7ee5a77bc3",
+  "plugins": ["node-workspace"],
+  "release-type": "node",
+  "packages": {
+    ".": {}
+  },
+  "changelog-sections": [
+    { "type": "feat", "section": "✨ Features" },
+    { "type": "feature", "section": "✨ Features" },
+    { "type": "fix", "section": "🐛 Bug Fixes" },
+    { "type": "perf", "section": "🐎 Performance" },
+    { "type": "revert", "section": "⏪ Reverts" },
+    { "type": "docs", "section": "📚 Documentation" },
+    { "type": "chore", "section": "🧹 Chores" },
+    { "type": "chores", "section": "🧹 Chores" },
+    { "type": "refactor", "section": "🔨 Refactor" },
+    { "type": "test", "section": "🧪 Testing" },
+    { "type": "tests", "section": "🧪 Testing" },
+    { "type": "build", "section": "👷 Build & CI" },
+    { "type": "ci", "section": "👷 Build & CI" }
+  ]
+}
