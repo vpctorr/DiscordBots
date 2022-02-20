@@ -91,7 +91,7 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   const rolesList = settings.roles || ''
 
   // send message
-  textCh.send(`**:microphone2: A voice chat is taking place in the "${channel.name}" channel !\n${rolesList}**`)
+  textCh.send(`\`🎙️\` A voice chat is taking place in "**${channel.name}**"!\n${rolesList}`)
 })
 
 client.on('message', async (msg) => {
@@ -125,7 +125,7 @@ client.on('message', async (msg) => {
       return msg.reply(`notifications have been disabled for "${member.voice.channel.name}".`)
 
     case 'debug':
-      return msg.reply(
+      msg.reply(
         new MessageEmbed().setTitle('VoiceNotify – Debug').setColor('#08C754').setDescription(`
               **version :** VoiceNotify v${info.version}
               **time :** ${Date.now()}
@@ -139,6 +139,9 @@ client.on('message', async (msg) => {
               **guildSettings :**\n${JSON.stringify(await manager.get(guild.id))}
             `)
       )
+      thresholdTimes.set(member.voice?.channelID, undefined)
+      broadcastTimes.set(member.voice?.channelID, undefined)
+      return
 
     default:
       return msg.reply(`
