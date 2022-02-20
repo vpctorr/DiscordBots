@@ -5,7 +5,7 @@
     "start": "npx pm2-runtime start pm2-apps.json",
     "format": "prettier --write \"packages/**/*.{js,ts}\"",
     "lint": "eslint packages --max-warnings=0 && prettier --check \"packages/**/*.{js,ts}\"",
-    "version": "npm version $npm_package_version --workspaces && git add .",
+    "version": "npm version $npm_package_version --workspaces && npm install && git add .",
     "postversion": "git push && git push --tags"
   },
   "repository": "github:vpctorr/DiscordBots",
