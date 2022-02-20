@@ -4,8 +4,7 @@
   "scripts": {
     "start": "npx pm2-runtime start pm2-apps.json",
     "format": "prettier --write \"packages/**/*.{js,ts}\"",
-    "lint": "eslint packages --max-warnings=0 && prettier --check \"packages/**/*.{js,ts}\"",
-    "postversion": "sh scripts/postversion.sh"
+    "lint": "eslint packages --max-warnings=0 && prettier --check \"packages/**/*.{js,ts}\""
   },
   "repository": "github:vpctorr/DiscordBots",
   "author": "vpctorr <bonjour@victor.id> (https://victor.id)",
