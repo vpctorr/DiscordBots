@@ -52,7 +52,7 @@ client.on('message', async (msg) => {
         const bufs = []
         res.on('data', (chunk) => bufs.push(chunk))
         res.on('error', (err) => {
-          channel.send(`Sorry, the conversion has failed :cry:`)
+          channel.send(`\`😢\` Sorry, the conversion **has failed**`)
           return log(`Error during HTTP request : ${err.message}`)
         })
         res.on('end', () => {
@@ -60,13 +60,13 @@ client.on('message', async (msg) => {
 
           convert(fileData, '.pdf', undefined, (err, pdfData) => {
             if (err) {
-              channel.send(`Sorry, the conversion has failed :cry:`)
+              channel.send(`\`😢\` Sorry, the conversion **has failed**`)
               return log(`Error converting file : ${err}`)
             }
 
             const newName = name.substring(0, name.lastIndexOf('.')) + '.pdf'
             const newAttachment = new MessageAttachment(pdfData, newName)
-            channel.send(`**:paperclip: Here is your converted PDF file :**`, newAttachment)
+            channel.send(`\`📎\` Here is your converted **PDF file**:`, newAttachment)
           })
         })
       })
