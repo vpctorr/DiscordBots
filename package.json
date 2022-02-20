@@ -1,28 +1,27 @@
 {
   "name": "discordbots",
   "version": "1.5.2",
-  "description": "",
   "scripts": {
-    "postinstall": "cd MakePDF && npm install && cd ../VoiceNotify && npm install",
     "start": "npx pm2-runtime start pm2-apps.json",
-    "format": "prettier --write '{MakePDF,VoiceNotify}/**/*.{js,jsx,ts,tsx}'",
-    "lint": "eslint MakePDF VoiceNotify --max-warnings=0 && prettier --check '{MakePDF,VoiceNotify}/**/*.{js,jsx,ts,tsx}'",
-    "postversion": "cd MakePDF && npm version -- $npm_package_version && cd ../VoiceNotify && npm version -- $npm_package_version && cd ../ && git add -A && git commit -m \"Release v$npm_package_version\" && git push && git tag -a v$npm_package_version HEAD -m \"$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:'%h %s')\" && git push origin v$npm_package_version"
+    "format": "prettier --write \"packages/**/*.{js,ts}\"",
+    "lint": "eslint packages --max-warnings=0 && prettier --check \"packages/**/*.{js,ts}\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vpctorr/DiscordBots.git"
-  },
-  "author": "vpctorr",
+  "repository": "github:vpctorr/DiscordBots",
+  "author": "vpctorr <bonjour@victor.id> (https://victor.id)",
   "license": "MIT",
-  "homepage": "https://github.com/vpctorr/DiscordBots#readme",
-  "bugs": {
-    "url": "https://github.com/vpctorr/DiscordBots/issues"
+  "workspaces": [
+    "packages/MakePDF",
+    "packages/VoiceNotify"
+  ],
+  "dependencies": {
+    "pm2": "^5.2.0",
+    "discord.js": "^12.5.3"
   },
   "devDependencies": {
     "eslint": "^8.9.0",
     "eslint-config-universe": "^10.0.0",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "dotenv": "^16.0.0"
   },
   "eslintConfig": {
     "extends": [
@@ -36,10 +35,9 @@
     "tabWidth": 2,
     "printWidth": 120
   },
-  "dependencies": {
-    "pm2": "^5.1.2"
-  },
+  "type": "module",
   "engines": {
-    "node": "16.x"
+    "node": ">=17.x",
+    "npm": ">=8.x"
   }
 }

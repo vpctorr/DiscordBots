@@ -1,0 +1,15 @@
+{
+  "name": "discordbots-voicenotify",
+  "version": "1.5.2",
+  "main": "voicenotify.js",
+  "scripts": {
+    "start": "node -r dotenv/config ."
+  },
+  "repository": "github:vpctorr/DiscordBots",
+  "author": "vpctorr <bonjour@victor.id> (https://victor.id)",
+  "license": "MIT",
+  "dependencies": {
+    "firebase-admin": "^10.0.2"
+  },
+  "type": "module"
+}

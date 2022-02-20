@@ -4,7 +4,7 @@ import { Client, WebhookClient, MessageAttachment, MessageEmbed } from 'discord.
 import { get, request } from 'https'
 
 import { convert } from './convert.js'
-import info from './package.json'
+import info from './package.json' assert { type: 'json' }
 const client = new Client()
 const hook = new WebhookClient(process.env.MAKEPDF_WEBHOOK_ID, process.env.MAKEPDF_WEBHOOK_TOKEN)
 

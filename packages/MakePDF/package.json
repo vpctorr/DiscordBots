@@ -1,0 +1,16 @@
+{
+  "name": "discordbots-makepdf",
+  "version": "1.5.2",
+  "main": "makepdf.js",
+  "scripts": {
+    "start": "node -r dotenv/config ."
+  },
+  "repository": "github:vpctorr/DiscordBots",
+  "author": "vpctorr <bonjour@victor.id> (https://victor.id)",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^3.2.3",
+    "tmp": "^0.2.1"
+  },
+  "type": "module"
+}
