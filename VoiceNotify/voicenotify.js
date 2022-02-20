@@ -125,7 +125,7 @@ client.on('message', async (msg) => {
       return msg.reply(`notifications have been disabled for "${member.voice.channel.name}".`)
 
     case 'debug':
-      return msg.reply(
+      msg.reply(
         new MessageEmbed().setTitle('VoiceNotify – Debug').setColor('#08C754').setDescription(`
               **version :** VoiceNotify v${info.version}
               **time :** ${Date.now()}
@@ -139,6 +139,9 @@ client.on('message', async (msg) => {
               **guildSettings :**\n${JSON.stringify(await manager.get(guild.id))}
             `)
       )
+      thresholdTimes.set(member.voice?.channelID, undefined)
+      broadcastTimes.set(member.voice?.channelID, undefined)
+      return
 
     default:
       return msg.reply(`
