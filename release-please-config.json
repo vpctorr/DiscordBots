@@ -1,10 +1,11 @@
 {
-  "bootstrap-sha": "67e7e7748545460add1acd2ec9a1ad7ee5a77bc3",
-  "last-release-sha": "",
+  "bootstrap-sha": "03c74e27c3cf07a9cd669c33478b18325ac174b1",
   "plugins": ["node-workspace"],
   "release-type": "node",
   "packages": {
-    ".": {}
+    ".": {},
+    "packages/MakePDF": {},
+    "packages/VoiceNotify": {}
   },
   "changelog-sections": [
     { "type": "feat", "section": "✨ Features" },
