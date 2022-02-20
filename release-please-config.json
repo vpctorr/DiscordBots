@@ -1,0 +1,11 @@
+{
+  "bootstrap-sha": "67e7e7748545460add1acd2ec9a1ad7ee5a77bc3",
+  "release-as": "1.6.0",
+  "plugins": ["node-workspace"],
+  "release-type": "node",
+  "packages": {
+    ".": {},
+    "packages/MakePDF": {},
+    "packages/VoiceNotify": {}
+  }
+}
