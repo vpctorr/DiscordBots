@@ -7,7 +7,7 @@ import { initializeApp, cert } from 'firebase-admin/app'
 import { getDatabase } from 'firebase-admin/database'
 import { request } from 'https'
 
-import info from './package.json'
+import info from './package.json' assert { type: 'json' }
 
 const client = new Client()
 const hook = new WebhookClient(process.env.VOICENOTIFY_WEBHOOK_ID, process.env.VOICENOTIFY_WEBHOOK_TOKEN)

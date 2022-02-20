@@ -3,7 +3,7 @@
   "version": "1.5.2",
   "main": "makepdf.js",
   "scripts": {
-    "start": "node -r dotenv/config --experimental-json-modules ."
+    "start": "node -r dotenv/config ."
   },
   "repository": "github:vpctorr/DiscordBots",
   "author": "vpctorr <bonjour@victor.id> (https://victor.id)",

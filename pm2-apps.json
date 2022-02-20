@@ -2,13 +2,11 @@
   "apps": [
     {
       "name": "MakePDF",
-      "script": "./packages/MakePDF/makepdf.js",
-      "node_args": "--experimental-json-modules"
+      "script": "./packages/MakePDF/makepdf.js"
     },
     {
       "name": "VoiceNotify",
-      "script": "./packages/VoiceNotify/voicenotify.js",
-      "node_args": "--experimental-json-modules"
+      "script": "./packages/VoiceNotify/voicenotify.js"
     }
   ]
 }

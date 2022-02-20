@@ -36,8 +36,9 @@
     "tabWidth": 2,
     "printWidth": 120
   },
+  "type": "module",
   "engines": {
-    "node": "16.x",
+    "node": ">=17.x",
     "npm": ">=8.x"
   }
 }
