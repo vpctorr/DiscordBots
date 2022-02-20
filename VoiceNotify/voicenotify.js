@@ -91,7 +91,7 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   const rolesList = settings.roles || ''
 
   // send message
-  textCh.send(`**:microphone2: A voice chat is taking place in the "${channel.name}" channel !\n${rolesList}**`)
+  textCh.send(`\`🎙️\` A voice chat is taking place in "**${channel.name}**"!\n${rolesList}`)
 })
 
 client.on('message', async (msg) => {
