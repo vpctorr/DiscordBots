@@ -8,8 +8,7 @@ VoiceNotify is a Discord bot that notifies people when a voice chat is taking pl
 
 ## Setting it up
 
-You MUST run this with environment variables, or alternatively use a `.env` file as follows
-Firebase Realtime Database is used to store channel data, fill the `FIREBASE` properties accordingly
+You MUST run this with environment variables, or alternatively use a `.env` file as follows. Firebase Realtime Database is used to store channel data, fill the `FIREBASE` properties accordingly :
 
 ```
 VOICENOTIFY_DISCORD_TOKEN=your_discord_token
@@ -33,3 +32,12 @@ Optional : [threshold] to trigger an alert defaults to 5 people ; [roles] will b
 
 `@VoiceNotify disable`
 Disables voice chat notifications for the voice channel you are in.
+
+## Debugging
+
+Users can use the command `@VoiceNotify debug` to display useful informations for debugging purposes. Set the `WEBHOOK` environment variables to receive Discord notifications if exceptions arise :
+
+```
+VOICENOTIFY_WEBHOOK_ID=your_webhook_id
+VOICENOTIFY_WEBHOOK_TOKEN=your_webhook_token
+```
