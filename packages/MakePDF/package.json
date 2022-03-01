@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "async": "^3.2.3",
+    "discord.js": "^12.5.3",
     "tmp": "^0.2.1"
   },
   "type": "module"
