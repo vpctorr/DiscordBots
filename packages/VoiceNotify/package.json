@@ -9,8 +9,8 @@
   "author": "vpctorr <bonjour@victor.id> (https://victor.id)",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^13.6.0",
-    "firebase-admin": "^10.0.2"
+    "discord.js": "^13.7.0",
+    "firebase-admin": "^10.2.0"
   },
   "type": "module"
 }

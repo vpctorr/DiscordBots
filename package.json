@@ -4,9 +4,7 @@
   "scripts": {
     "start": "npx pm2-runtime start pm2-apps.json",
     "format": "prettier --write \"packages/**/*.{js,ts}\"",
-    "lint": "eslint packages --max-warnings=0 && prettier --check \"packages/**/*.{js,ts}\"",
-    "version": "npm version $npm_package_version --workspaces && npm install && git add .",
-    "postversion": "git push && git push --tags"
+    "lint": "eslint packages --max-warnings=0 && prettier --check \"packages/**/*.{js,ts}\""
   },
   "repository": "github:vpctorr/DiscordBots",
   "author": "vpctorr <bonjour@victor.id> (https://victor.id)",
@@ -19,10 +17,10 @@
     "pm2": "^5.2.0"
   },
   "devDependencies": {
-    "dotenv": "^16.0.0",
-    "eslint": "^8.9.0",
-    "eslint-config-universe": "^10.0.0",
-    "prettier": "^2.5.1"
+    "dotenv": "^16.0.1",
+    "eslint": "^8.16.0",
+    "eslint-config-universe": "^11.0.0",
+    "prettier": "^2.6.2"
   },
   "eslintConfig": {
     "extends": [
