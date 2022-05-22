@@ -7,7 +7,7 @@ import { initializeApp, cert } from 'firebase-admin/app'
 import { getDatabase } from 'firebase-admin/database'
 import { request } from 'https'
 
-import info from './package.json' assert { type: 'json' }
+import info from '../package.json' assert { type: 'json' }
 
 const version = (process.env.HEROKU_DEV && process.env.HEROKU_SLUG_DESCRIPTION) || info.version
 

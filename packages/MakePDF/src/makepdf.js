@@ -4,7 +4,7 @@ import { Client, WebhookClient, MessageAttachment, MessageEmbed } from 'discord.
 import { get, request } from 'https'
 
 import { convert } from './convert.js'
-import info from './package.json' assert { type: 'json' }
+import info from '../package.json' assert { type: 'json' }
 const version = (process.env.HEROKU_DEV && process.env.HEROKU_SLUG_DESCRIPTION) || info.version
 const client = new Client()
 const hook = new WebhookClient(process.env.MAKEPDF_WEBHOOK_ID, process.env.MAKEPDF_WEBHOOK_TOKEN)
