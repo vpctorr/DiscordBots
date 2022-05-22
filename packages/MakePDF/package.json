@@ -1,7 +1,7 @@
 {
   "name": "discordbots-makepdf",
   "version": "1.6.0",
-  "main": "makepdf.js",
+  "main": "src/makepdf.js",
   "scripts": {
     "start": "node -r dotenv/config ."
   },

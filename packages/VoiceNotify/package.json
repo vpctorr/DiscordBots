@@ -1,7 +1,7 @@
 {
   "name": "discordbots-voicenotify",
   "version": "1.6.0",
-  "main": "voicenotify.js",
+  "main": "src/voicenotify.js",
   "scripts": {
     "start": "node -r dotenv/config ."
   },
