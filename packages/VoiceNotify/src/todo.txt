@@ -1,0 +1,46 @@
+enable
+
+--
+
+VoiceNotify includes some options for reducing spam, that can be also be configured or disabled according to your needs.
+
+minimum users connected - default 5
+
+interval between alerts - default 10m
+
+require empty channel - default yes
+
+--
+
+For a personal meeting room system, you might want to set minimum users to 1 and adjust the interval depending on the likelihood of abuse.
+
+For event notifications, you might want the minimum users and interval settings to be high, without requiring the channel to be empty should some have joined already.
+
+--
+
+dms, subscriptions, @users, defaults
+
+--
+
+
+  // voicenotify | voicenotify help
+  // sends this message
+
+  // voicenotify setup
+  // allows admins to setup the bot for this channel
+
+  // voicenotify enable | voicenotify disable
+  // enables/disables self-service alerts (later)
+
+
+--
+
+makepdf convert context menu interaction
+
+--
+
+commands scope in invite
+
+--
+
+edit default preset does not update channel that have the default preset
