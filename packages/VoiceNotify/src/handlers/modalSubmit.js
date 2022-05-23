@@ -3,11 +3,11 @@ import duration from 'parse-duration'
 import { MessageActionRow, MessageButton } from 'discord.js'
 
 import { defaultsPresetValues } from './selectSubmit.js'
-import { manager } from '../utils/dbCache.js'
+import { db } from '../utils/database.js'
 
 export const presetChanges = new Map()
 
-export const handleModalSubmit = async (interaction) => {
+export const modalSubmitHandler = async (interaction) => {
   const { member, guild, mentions, content, channel, fields, customId } = interaction
 
   const [VOICE_ID, PRESET_SET, PRESET_ID] = customId.split('_')
@@ -35,7 +35,7 @@ export const handleModalSubmit = async (interaction) => {
     presetChanges.set(guild.id, presetsChanged)
   }
 
-  await manager.set(guild.id, VOICE_ID, {
+  await db.set(guild.id, VOICE_ID, {
     text: Number(channel.id),
     settings: isDifferentFromPreset ? newValues : PRESET_FULL
   })

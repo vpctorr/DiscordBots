@@ -1,6 +1,6 @@
 import { MessageSelectMenu, MessageActionRow } from 'discord.js'
 
-import { manager } from '../utils/dbCache.js'
+import { db } from '../utils/database.js'
 
 const defaults = {
   one2one: [
@@ -30,7 +30,7 @@ const defaults = {
 }
 
 export const selectPreset = async (guildId, channelId) => {
-  const guildPresets = await manager.get(`${guildId}_presets`)
+  const guildPresets = await db.get(`${guildId}_presets`)
   const presetsArray = Object.entries(guildPresets)
 
   if (!guildPresets['guild_one2one']) presetsArray.push(defaults.one2one)

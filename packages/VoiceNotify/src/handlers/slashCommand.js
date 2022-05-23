@@ -1,6 +1,6 @@
-import { selectPreset } from '../../components/selectMenu.js'
+import { selectPreset } from '../components/select.js'
 
-export const handleCommand = async (interaction) => {
+export const slashCommandHandler = async (interaction) => {
   if (interaction.commandName === 'enable') {
     await handleEnableCommand(interaction)
   }

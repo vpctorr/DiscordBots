@@ -1,9 +1,9 @@
-import { manager } from '../utils/dbCache.js'
+import { db } from '../utils/database.js'
 
 const thresholdTimes = new Map() //last threshold time per channel
 const broadcastTimes = new Map() //last broadcast time per channel
 
-export const handleVoiceState = async (oldChannel, channel, guild) => {
+export const voiceUpdateHandler = async (oldChannel, channel, guild) => {
   // exit if user is leaving a channel
   if (!channel) return
 
@@ -11,12 +11,12 @@ export const handleVoiceState = async (oldChannel, channel, guild) => {
   if (channel.id == oldChannel?.id) return
 
   // fetch channel settings from db
-  const settings = await manager.get(guild.id, channel.id)
+  const settings = await db.get(guild.id, channel.id)
   if (!settings) return
 
   // get text channel or delete if undefined (deleted channel)
   const textCh = await guild.channels.cache.find((ch) => ch.id == settings.text)
-  if (!textCh?.isText() || textCh?.deleted) return manager.del(guild.id, channel.id)
+  if (!textCh?.isText() || textCh?.deleted) return db.del(guild.id, channel.id)
 
   // exit if threshold is not reached
   if (channel.members.size < settings.min) return

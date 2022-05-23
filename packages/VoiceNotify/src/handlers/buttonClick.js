@@ -1,9 +1,9 @@
 import { presetChanges } from './modalSubmit.js'
-import { manager } from '../utils/dbCache.js'
+import { db } from '../utils/database.js'
 
 import { MessageActionRow, MessageButton } from 'discord.js'
 
-export const handleButtonSubmit = async (interaction) => {
+export const buttonClickHandler = async (interaction) => {
   const [ACTION] = interaction.customId.split('_')
   if (ACTION === 'presetUpdate') handlePresetUpdate(interaction)
 }
@@ -24,11 +24,11 @@ const handlePresetUpdate = async (interaction) => {
 
   Promise.all([
     //update preset
-    await manager.set(`${guild.id}_presets`, `guild_${PRESET_ID}`, {
+    await db.set(`${guild.id}_presets`, `guild_${PRESET_ID}`, {
       settings: NEW_VALUES
     }),
     //update channel
-    await manager.set(guild.id, CH_UPDATE, {
+    await db.set(guild.id, CH_UPDATE, {
       settings: `guild_${PRESET_ID}`
     }),
     //update button

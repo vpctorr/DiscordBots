@@ -1,7 +1,7 @@
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getDatabase } from 'firebase-admin/database'
 
-let db
+let f
 
 export const initializeDatabase = async () => {
   await initializeApp({
@@ -12,28 +12,28 @@ export const initializeDatabase = async () => {
     }),
     databaseURL: process.env.VOICENOTIFY_FIREBASE_DATABASE_URL
   })
-  db = getDatabase()
+  f = getDatabase()
 }
 
-export const manager = {
+export const db = {
   cache: {},
-  get: async (g, c) => (c ? (await manager.get(g))?.[c] : (manager.cache[g] ||= (await db.ref(g).once('value')).val())),
+  get: async (g, c) => (c ? (await db.get(g))?.[c] : (db.cache[g] ||= (await f.ref(g).once('value')).val())),
   set: async (g, c, s) =>
     s &&
-    (await db
+    (await f
       .ref(g)
       .child(c)
       .update(s)
-      .then(async () => (await manager.get(g)) && (manager.cache[g][c] = s))),
+      .then(async () => (await db.get(g)) && (db.cache[g][c] = s))),
   del: async (g, c) =>
     c
-      ? await db
+      ? await f
           .ref(g)
           .child(c)
           .remove()
-          .then(() => delete manager.cache[g]?.[c])
-      : await db
+          .then(() => delete db.cache[g]?.[c])
+      : await f
           .ref(g)
           .remove()
-          .then(() => delete manager.cache[g])
+          .then(() => delete db.cache[g])
 }
