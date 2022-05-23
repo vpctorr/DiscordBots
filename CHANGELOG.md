@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.7.0](https://github.com/vpctorr/DiscordBots/compare/discordbots-v1.6.0...discordbots-v1.7.0) (2022-05-23)
+
+
+### 🚚 Integration
+
+* differentiate package changelogs ([c033457](https://github.com/vpctorr/DiscordBots/commit/c033457664ea530c0ddbfc63ba6a5169800892b8))
+
+
+### 📚 Documentation
+
+* updated links & added debug info ([29b832f](https://github.com/vpctorr/DiscordBots/commit/29b832fae6d7fd8ecffe1ef950fbfc5926518ae0))
+
+
+### ✨ Features
+
+* convert VoiceNotify to discord.js v13 ([#49](https://github.com/vpctorr/DiscordBots/issues/49)) ([c4b5ee3](https://github.com/vpctorr/DiscordBots/commit/c4b5ee336de40a4b4d4fb600216c3d2fdb835d18))
+
+
+### 🧹 Refactor
+
+* move bots logic to src ([c46290f](https://github.com/vpctorr/DiscordBots/commit/c46290f691d668ae30f23b2332db0a83accd5edb))
+
 ## [1.6.0](https://github.com/vpctorr/DiscordBots/compare/discordbots-v1.5.2...discordbots-v1.6.0) (2022-02-20)
 
 
