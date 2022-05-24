@@ -1,5 +1,6 @@
 import { presetChanges } from './modalSubmit.js'
 import { db } from '../utils/database.js'
+import { defaults } from '../defaults.js'
 
 import { MessageActionRow, MessageButton } from 'discord.js'
 
@@ -8,31 +9,33 @@ export const buttonClickHandler = async (interaction) => {
   if (ACTION === 'presetUpdate') handlePresetUpdate(interaction)
 }
 
-const handlePresetUpdate = async (interaction) => {
-  const { guild, customId } = interaction
-  const [_, PRESET_SET, PRESET_ID] = customId.split('_')
-  const PRESET_FULL = `${PRESET_SET}_${PRESET_ID}`
+const handlePresetUpdate = async (event) => {
+  const { guild, customId } = event
+
+  const [_, PRESET_ID] = customId.split('_')
 
   //get changes map for guild
   const guildPresetChanges = presetChanges.get(guild.id)
   //return if button not tied to ongoing change
-  if (!guildPresetChanges[PRESET_FULL]) return
+  if (!guildPresetChanges[PRESET_ID]) return
   //remove ongoing change from map
-  presetChanges.set({ ...guildPresetChanges, [PRESET_FULL]: undefined })
+  presetChanges.set({ ...guildPresetChanges, [PRESET_ID]: undefined })
   //extract values from ongoing change
-  const { channel: CH_UPDATE, values: NEW_VALUES } = guildPresetChanges[PRESET_FULL]
+  const { channel: CH_UPDATE, values: NEW_VALUES } = guildPresetChanges[PRESET_ID]
 
   Promise.all([
     //update preset
-    await db.set(`${guild.id}_presets`, `guild_${PRESET_ID}`, {
-      settings: NEW_VALUES
+    await db.set(`${guild.id}_presets`, PRESET_ID, {
+      settings: NEW_VALUES,
+      label: defaults[PRESET_ID].label,
+      emoji: defaults[PRESET_ID].emoji
     }),
     //update channel
     await db.set(guild.id, CH_UPDATE, {
-      settings: `guild_${PRESET_ID}`
+      settings: PRESET_ID
     }),
     //update button
-    await interaction.update({ components: [updatedBtn] })
+    await event.update({ components: [updatedBtn] })
   ])
 }
 
