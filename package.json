@@ -1,6 +1,6 @@
 {
   "name": "discordbots",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "scripts": {
     "start": "npx pm2-runtime start pm2-apps.json",
     "format": "prettier --write \"packages/**/*.{js,ts}\"",
