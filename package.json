@@ -1,6 +1,7 @@
 {
   "name": "discordbots",
   "version": "1.7.0",
+  "type": "module",
   "scripts": {
     "start": "npx pm2-runtime start pm2-apps.json",
     "format": "prettier --write \"packages/**/*.{js,ts}\"",
@@ -17,24 +18,13 @@
     "pm2": "^5.2.2"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/plugin-syntax-import-assertions": "^7.20.0",
     "dotenv": "^16.0.3",
     "eslint": "^8.32.0",
     "eslint-config-universe": "^11.1.1",
     "prettier": "^2.8.3"
   },
-  "eslintConfig": {
-    "extends": [
-      "universe/node"
-    ]
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "none",
-    "tabWidth": 2,
-    "printWidth": 120
-  },
-  "type": "module",
   "engines": {
     "node": ">=18.x",
     "npm": ">=9.x"
