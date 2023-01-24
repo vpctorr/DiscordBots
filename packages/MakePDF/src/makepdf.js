@@ -84,21 +84,23 @@ client.on('message', async (msg) => {
 
 const updateGuildCount = (server_count) => {
   client.user.setActivity(`${server_count} servers ⚡`, { type: 'WATCHING' })
-  process.env.MAKEPDF_TOPGG_TOKEN &&
-    request({
-      hostname: 'top.gg',
-      port: 443,
-      path: `/api/bots/${process.env.MAKEPDF_BOT_ID}/stats`,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${process.env.MAKEPDF_TOPGG_TOKEN}`,
-      },
-    }).end(
-      JSON.stringify({
-        server_count,
-      })
-    )
+  try {
+    process.env.MAKEPDF_TOPGG_TOKEN &&
+      request({
+        hostname: 'top.gg',
+        port: 443,
+        path: `/api/bots/${process.env.MAKEPDF_BOT_ID}/stats`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${process.env.MAKEPDF_TOPGG_TOKEN}`,
+        },
+      }).end(
+        JSON.stringify({
+          server_count,
+        })
+      )
+  } catch (_e) {}
 }
 
 client.on('ready', () => {
