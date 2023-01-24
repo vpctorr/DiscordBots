@@ -78,9 +78,14 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   const settings = await manager.get(guild.id, channel.id)
   if (!settings) return
 
-  // get text channel or delete if undefined (deleted channel)
-  const textCh = await guild.channels.cache.find((ch) => ch.id == settings.text)
-  if (!textCh?.isText() || textCh?.deleted) return manager.del(guild.id, channel.id)
+  // get text channel or delete if unreachable (deleted channel)
+  let textChannel
+  try {
+    textChannel = await guild.channels.fetch(settings.text)
+  } catch (e) {
+    log(`Text channel "${settings.text}" unreachable, deleting settings. (${e.code}: ${e.message})`)
+    return manager.del(guild.id, channel.id)
+  }
 
   // exit if threshold is not reached
   if (channel.members.size < settings.min) return
@@ -104,7 +109,7 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   const rolesList = settings.roles || ''
 
   // send message
-  textCh.send(`\`🎙️\` A voice chat is taking place in "**${channel.name}**"!\n${rolesList}`)
+  textChannel.send(`\`🎙️\` A voice chat is taking place in "**${channel.name}**"!\n${rolesList}`)
 })
 
 client.on('messageCreate', async (msg) => {
@@ -124,7 +129,7 @@ client.on('messageCreate', async (msg) => {
 
     case 'enable':
       const settings = {
-        text: Number(channel.id),
+        text: channel.id,
         min: Number(/^\d+$/.test(params[0]) ? params[0] : '5'),
         roles: params?.toString().match(MessageMentions.ROLES_PATTERN),
       }
@@ -183,21 +188,21 @@ Disables voice chat notifications for the voice channel you are in.
 const updateGuildCount = (server_count) => {
   client.user.setActivity(`${server_count} servers ⚡`, { type: 'WATCHING' })
   try {
-  process.env.VOICENOTIFY_TOPGG_TOKEN &&
-    request({
-      hostname: 'top.gg',
-      port: 443,
-      path: `/api/bots/${process.env.VOICENOTIFY_BOT_ID}/stats`,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${process.env.VOICENOTIFY_TOPGG_TOKEN}`,
-      },
-    }).end(
-      JSON.stringify({
-        server_count,
-      })
-    )
+    process.env.VOICENOTIFY_TOPGG_TOKEN &&
+      request({
+        hostname: 'top.gg',
+        port: 443,
+        path: `/api/bots/${process.env.VOICENOTIFY_BOT_ID}/stats`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${process.env.VOICENOTIFY_TOPGG_TOKEN}`,
+        },
+      }).end(
+        JSON.stringify({
+          server_count,
+        })
+      )
   } catch (_e) {}
 }
 
