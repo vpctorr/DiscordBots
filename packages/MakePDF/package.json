@@ -9,7 +9,7 @@
   "author": "vpctorr <bonjour@victor.id> (https://victor.id)",
   "license": "MIT",
   "dependencies": {
-    "async": "^3.2.3",
+    "async": "^3.2.4",
     "discord.js": "^12.5.3",
     "tmp": "^0.2.1"
   },
