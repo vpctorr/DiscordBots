@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.7.1](https://github.com/vpctorr/DiscordBots/compare/discordbots-makepdf-v1.7.0...discordbots-makepdf-v1.7.1) (2023-01-24)
+
+
+### 📦 Chores
+
+* fix eslint ([cdf0200](https://github.com/vpctorr/DiscordBots/commit/cdf0200264d05428051e1673a40e06fcb410ed5c))
+* update dependencies ([cc07378](https://github.com/vpctorr/DiscordBots/commit/cc07378303480b4808e58f0bb8da3d63f1c16ff4))
+
+
+### 🔨 Improvements
+
+* add a try/catch block around stats for safety ([3be4fc4](https://github.com/vpctorr/DiscordBots/commit/3be4fc473ecede8c77be0b0e099f4d5ae8ba88a5))
+* show environment info in debug ([d56be2f](https://github.com/vpctorr/DiscordBots/commit/d56be2fa98a49f170d547efa3e323e87bf96d92e))
+
+
+### 🚚 Integration
+
+* update create-release.yml ([bdc1919](https://github.com/vpctorr/DiscordBots/commit/bdc19196399d6a5a6bbb7589e5b9f3167a281577))
+
 ## [1.7.0](https://github.com/vpctorr/DiscordBots/compare/discordbots-makepdf-v1.6.0...discordbots-makepdf-v1.7.0) (2022-05-23)
 
 
