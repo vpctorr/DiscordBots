@@ -182,6 +182,7 @@ Disables voice chat notifications for the voice channel you are in.
 
 const updateGuildCount = (server_count) => {
   client.user.setActivity(`${server_count} servers ⚡`, { type: 'WATCHING' })
+  try {
   process.env.VOICENOTIFY_TOPGG_TOKEN &&
     request({
       hostname: 'top.gg',
@@ -197,6 +198,7 @@ const updateGuildCount = (server_count) => {
         server_count,
       })
     )
+  } catch (_e) {}
 }
 
 client.on('ready', () => {
