@@ -10,12 +10,12 @@ const convertWithOptions = (document, format, filter, options, callback) => {
   const tempDir = dirSync({
     prefix: 'libreofficeConvert_',
     unsafeCleanup: true,
-    ...tmpOptions
+    ...tmpOptions,
   })
   const installDir = dirSync({
     prefix: 'soffice',
     unsafeCleanup: true,
-    ...tmpOptions
+    ...tmpOptions,
   })
   return async.auto(
     {
@@ -30,14 +30,14 @@ const convertWithOptions = (document, format, filter, options, callback) => {
               process.env.OFFICE_PATH.replace('opt', 'usr/bin'),
               '/usr/bin/libreoffice',
               '/usr/bin/soffice',
-              '/snap/bin/libreoffice'
+              '/snap/bin/libreoffice',
             ]
             break
           case 'win32':
             paths = [
               join(process.env['PROGRAMFILES(X86)'], 'LIBREO~1/program/soffice.exe'),
               join(process.env['PROGRAMFILES(X86)'], 'LibreOffice/program/soffice.exe'),
-              join(process.env.PROGRAMFILES, 'LibreOffice/program/soffice.exe')
+              join(process.env.PROGRAMFILES, 'LibreOffice/program/soffice.exe'),
             ]
             break
           default:
@@ -68,7 +68,7 @@ const convertWithOptions = (document, format, filter, options, callback) => {
           command += ` --outdir ${tempDir.name} ${join(tempDir.name, 'source')}`
           const args = command.split(' ')
           return execFile(results.soffice, args, callback)
-        }
+        },
       ],
       loadDestination: [
         'convert',
@@ -76,12 +76,12 @@ const convertWithOptions = (document, format, filter, options, callback) => {
           async.retry(
             {
               times: asyncOptions.times || 3,
-              interval: asyncOptions.interval || 200
+              interval: asyncOptions.interval || 200,
             },
             (callback) => readFile(join(tempDir.name, `source.${format.split(':')[0]}`), callback),
             callback
-          )
-      ]
+          ),
+      ],
     },
     (err, res) => {
       tempDir.removeCallback()

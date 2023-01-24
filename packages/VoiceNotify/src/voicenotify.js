@@ -13,18 +13,18 @@ const versionText = `VoiceNotify v${info.version}`
 const environment = `${process.env.HEROKU_APP_NAME ?? 'local'} (${process.env.HEROKU_SLUG_DESCRIPTION ?? '…'})`
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES]
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES],
 })
 const hook = new WebhookClient({
   id: process.env.VOICENOTIFY_WEBHOOK_ID,
-  token: process.env.VOICENOTIFY_WEBHOOK_TOKEN
+  token: process.env.VOICENOTIFY_WEBHOOK_TOKEN,
 })
 
 const log = (msg) => {
   console.log(msg)
   hook
     .send({
-      embeds: [new MessageEmbed().setDescription(msg).setTitle('VoiceNotify – Debug').setColor('#08C754')]
+      embeds: [new MessageEmbed().setDescription(msg).setTitle('VoiceNotify – Debug').setColor('#08C754')],
     })
     .catch(() => {})
 }
@@ -33,9 +33,9 @@ initializeApp({
   credential: cert({
     clientEmail: process.env.VOICENOTIFY_FIREBASE_CLIENT_EMAIL,
     privateKey: JSON.parse(`"${process.env.VOICENOTIFY_FIREBASE_PRIVATE_KEY}"`),
-    projectId: process.env.VOICENOTIFY_FIREBASE_PROJECT_ID
+    projectId: process.env.VOICENOTIFY_FIREBASE_PROJECT_ID,
   }),
-  databaseURL: process.env.VOICENOTIFY_FIREBASE_DATABASE_URL
+  databaseURL: process.env.VOICENOTIFY_FIREBASE_DATABASE_URL,
 })
 const db = getDatabase()
 const lastRestart = Date.now()
@@ -64,7 +64,7 @@ const manager = {
       : await db
           .ref(g)
           .remove()
-          .then(() => delete manager.cache[g])
+          .then(() => delete manager.cache[g]),
 }
 
 client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }) => {
@@ -126,7 +126,7 @@ client.on('messageCreate', async (msg) => {
       const settings = {
         text: Number(channel.id),
         min: Number(/^\d+$/.test(params[0]) ? params[0] : '5'),
-        roles: params?.toString().match(MessageMentions.ROLES_PATTERN)
+        roles: params?.toString().match(MessageMentions.ROLES_PATTERN),
       }
       await manager.set(guild.id, member.voice.channelId, settings)
       return msg.reply(
@@ -159,8 +159,8 @@ client.on('messageCreate', async (msg) => {
               **lastBroadcast :** ${broadcastTimes.get(member.voice?.channelId)}
               **guildSettings :**\n\`\`\`${JSON.stringify(await manager.get(guild.id))}\`\`\`
               `
-            )
-        ]
+            ),
+        ],
       })
       thresholdTimes.set(member.voice?.channelId, undefined)
       broadcastTimes.set(member.voice?.channelId, undefined)
@@ -190,11 +190,11 @@ const updateGuildCount = (server_count) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `${process.env.VOICENOTIFY_TOPGG_TOKEN}`
-      }
+        Authorization: `${process.env.VOICENOTIFY_TOPGG_TOKEN}`,
+      },
     }).end(
       JSON.stringify({
-        server_count
+        server_count,
       })
     )
 }

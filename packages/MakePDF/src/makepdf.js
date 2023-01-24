@@ -4,7 +4,6 @@ import { Client, WebhookClient, MessageAttachment, MessageEmbed } from 'discord.
 import { get, request } from 'https'
 
 import { convert } from './convert.js'
-
 import info from '../package.json' assert { type: 'json' }
 
 const versionText = `MakePDF v${info.version}`
@@ -93,11 +92,11 @@ const updateGuildCount = (server_count) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `${process.env.MAKEPDF_TOPGG_TOKEN}`
-      }
+        Authorization: `${process.env.MAKEPDF_TOPGG_TOKEN}`,
+      },
     }).end(
       JSON.stringify({
-        server_count
+        server_count,
       })
     )
 }

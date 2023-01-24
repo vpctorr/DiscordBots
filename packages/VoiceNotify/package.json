@@ -1,6 +1,7 @@
 {
   "name": "discordbots-voicenotify",
   "version": "1.7.0",
+  "type": "module",
   "main": "src/voicenotify.js",
   "scripts": {
     "start": "node -r dotenv/config ."
@@ -11,6 +12,5 @@
   "dependencies": {
     "discord.js": "^13.12.0",
     "firebase-admin": "^11.5.0"
-  },
-  "type": "module"
+  }
 }
