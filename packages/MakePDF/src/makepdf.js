@@ -4,8 +4,12 @@ import { Client, WebhookClient, MessageAttachment, MessageEmbed } from 'discord.
 import { get, request } from 'https'
 
 import { convert } from './convert.js'
+
 import info from '../package.json' assert { type: 'json' }
-const version = (process.env.HEROKU_DEV && process.env.HEROKU_SLUG_DESCRIPTION) || info.version
+
+const versionText = `MakePDF v${info.version}`
+const environment = `${process.env.HEROKU_APP_NAME ?? 'local'} (${process.env.HEROKU_SLUG_DESCRIPTION ?? '…'})`
+
 const client = new Client()
 const hook = new WebhookClient(process.env.MAKEPDF_WEBHOOK_ID, process.env.MAKEPDF_WEBHOOK_TOKEN)
 
@@ -27,14 +31,20 @@ client.on('message', async (msg) => {
       (mentions?.has(guild?.me, { ignoreEveryone: true }) && member?.hasPermission('ADMINISTRATOR'))
     )
       return msg.reply(
-        new MessageEmbed().setTitle('MakePDF – Debug').setColor('#ED4539').setDescription(`
-          **version :** MakePDF v${version}
-          **time :** ${Date.now()}
-          **lastRestart :** ${lastRestart}
-          **guildId :** ${msg.guild?.id}
-          **memberId :** ${author.id}
-          **channelId :** ${channel.id}
-        `)
+        new MessageEmbed()
+          .setTitle('MakePDF – Debug')
+          .setColor('#ED4539')
+          .setDescription(
+            `
+            **version :** ${versionText}
+            **environment :** ${environment}
+            **time :** ${Date.now()}
+            **lastRestart :** ${lastRestart}
+            **guildId :** ${msg.guild?.id}
+            **memberId :** ${author.id}
+            **channelId :** ${channel.id}
+            `
+          )
       )
 
   const filesArray = attachments.array()
@@ -93,7 +103,7 @@ const updateGuildCount = (server_count) => {
 }
 
 client.on('ready', () => {
-  log(`Bot (re)started, version ${version}`)
+  log(`${versionText} (re)started on ${environment}`)
   updateGuildCount(client.guilds.cache.size)
 })
 client.on('guildCreate', () => updateGuildCount(client.guilds.cache.size))

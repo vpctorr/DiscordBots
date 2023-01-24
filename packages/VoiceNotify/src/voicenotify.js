@@ -9,7 +9,8 @@ import { request } from 'https'
 
 import info from '../package.json' assert { type: 'json' }
 
-const version = (process.env.HEROKU_DEV && process.env.HEROKU_SLUG_DESCRIPTION) || info.version
+const versionText = `VoiceNotify v${info.version}`
+const environment = `${process.env.HEROKU_APP_NAME ?? 'local'} (${process.env.HEROKU_SLUG_DESCRIPTION ?? '…'})`
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES]
@@ -146,7 +147,8 @@ client.on('messageCreate', async (msg) => {
             .setColor('#08C754')
             .setDescription(
               `
-              **version :** VoiceNotify v${version}
+              **version :** ${versionText}
+              **environment :** ${environment}
               **time :** ${Date.now()}
               **lastRestart :** ${lastRestart}
               **guildId :** ${guild.id}
@@ -156,7 +158,7 @@ client.on('messageCreate', async (msg) => {
               **lastThreshold :** ${thresholdTimes.get(member.voice?.channelId)}
               **lastBroadcast :** ${broadcastTimes.get(member.voice?.channelId)}
               **guildSettings :**\n\`\`\`${JSON.stringify(await manager.get(guild.id))}\`\`\`
-            `
+              `
             )
         ]
       })
@@ -198,7 +200,7 @@ const updateGuildCount = (server_count) => {
 }
 
 client.on('ready', () => {
-  log(`Bot (re)started, version ${version}`)
+  log(`${versionText} (re)started on ${environment}`)
   updateGuildCount(client.guilds.cache.size)
 })
 client.on('guildCreate', () => updateGuildCount(client.guilds.cache.size))
