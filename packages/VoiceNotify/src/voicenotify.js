@@ -83,8 +83,8 @@ client.on('voiceStateUpdate', async ({ channel: oldChannel }, { channel, guild }
   try {
     textChannel = await guild.channels.fetch(settings.text)
   } catch (e) {
-    log(`Text channel "${settings.text}" unreachable, deleting settings. (${e.code}: ${e.message})`)
-    return manager.del(guild.id, channel.id)
+    return log(`Text channel "${settings.text}" unreachable. (${e.code}: ${e.message})`)
+    //return manager.del(guild.id, channel.id)
   }
 
   // exit if threshold is not reached
