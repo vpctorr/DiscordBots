@@ -1,4 +1,4 @@
-[![Discord Support Server](https://img.shields.io/discord/690172711770652779?color=5865F2&label=support%20server&logo=discord&logoColor=fff&style=for-the-badge)](https://discord.gg/MmmEYefD8k)
+[![Discord Support Server](https://img.shields.io/discord/690172711770652779?color=5865F2&label=support%20server&logo=discord&logoColor=fff&style=for-the-badge)](https://discord.gg/paXuDgJ)
 
 # VoiceNotify
 
