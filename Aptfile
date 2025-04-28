@@ -1,6 +1,6 @@
 libsm6
 libice6
-libxinerama1
+https://archive.ubuntu.com/ubuntu/pool/main/libx/libxinerama/libxinerama1_1.1.4-3build1_amd64.deb
 libdbus-glib-1-2
 libharfbuzz0b
 libharfbuzz-icu0
